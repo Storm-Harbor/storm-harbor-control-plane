@@ -1,0 +1,54 @@
+name: Simulate - GCP project loss
+
+on:
+  workflow_call:
+    inputs:
+      recovery_project: { required: true, type: string }
+      dry_run: { required: false, type: boolean, default: true }
+      confirmation: { required: true, type: string }
+  workflow_dispatch:
+    inputs:
+      recovery_project:
+        description: Disposable project; must end with -dr-sandbox
+        required: true
+        default: sample-dr-sandbox
+        type: string
+      dry_run:
+        description: Simulate without external mutations
+        required: true
+        default: true
+        type: boolean
+      confirmation:
+        description: Type SIMULATE to confirm
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DR_CONFIRMATION: ${{ inputs.confirmation }}
+      DR_DRY_RUN: ${{ inputs.dry_run }}
+      DR_SCENARIO: gcp-project-loss
+      DR_TARGET: ${{ inputs.recovery_project }}
+      DR_PHASES: preflight,organization-context,billing-and-labels,project-foundation,service-apis,kms,terraform-backend,handoff
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 26.6.0 }
+      - name: Run deterministic foundation simulation
+        run: |
+          node --run check:runtime
+          node scripts/simulate-recovery.mjs
+      - name: Publish foundation evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dr-evidence-gcp-project-loss-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/evidence/gcp-project-loss.json
+          if-no-files-found: error
+          retention-days: 30

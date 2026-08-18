@@ -1,0 +1,117 @@
+name: Simulate - Full project loss
+
+on:
+  workflow_call:
+    inputs:
+      recovery_project: { required: true, type: string }
+      recovery_point_age_minutes: { required: true, type: string }
+      dry_run: { required: false, type: boolean, default: true }
+      confirmation: { required: true, type: string }
+  workflow_dispatch:
+    inputs:
+      recovery_project:
+        description: Disposable project; must end with -dr-sandbox
+        required: true
+        default: sample-dr-sandbox
+        type: string
+      recovery_point_age_minutes:
+        description: Synthetic backup age
+        required: true
+        default: "5"
+        type: string
+      dry_run:
+        description: Simulate without external mutations
+        required: true
+        default: true
+        type: boolean
+      confirmation:
+        description: Type SIMULATE to confirm
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    uses: ./.github/workflows/simulate-gcp-project-loss.yml
+    with:
+      recovery_project: ${{ inputs.recovery_project }}
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  iam:
+    needs: foundation
+    uses: ./.github/workflows/simulate-iam-recovery.yml
+    with:
+      snapshot_age_minutes: ${{ inputs.recovery_point_age_minutes }}
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  terraform:
+    needs: iam
+    uses: ./.github/workflows/simulate-terraform-drift.yml
+    with:
+      scenario: state-unavailable
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  database:
+    needs: terraform
+    uses: ./.github/workflows/simulate-database-recovery.yml
+    with:
+      restore_target: sample-database-dr-restore
+      recovery_point_age_minutes: ${{ inputs.recovery_point_age_minutes }}
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  gke:
+    needs: database
+    uses: ./.github/workflows/simulate-gke-recovery.yml
+    with:
+      recovery_cluster: sample-gke-dr-sandbox
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  flux:
+    needs: gke
+    uses: ./.github/workflows/simulate-flux-bootstrap.yml
+    with:
+      gitops_path: clusters/recovery
+      dry_run: ${{ inputs.dry_run }}
+      confirmation: ${{ inputs.confirmation }}
+
+  evidence:
+    needs: [foundation, iam, terraform, database, gke, flux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 26.6.0 }
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dr-evidence-*
+          path: artifacts/components
+      - name: Validate and aggregate component evidence
+        run: |
+          node --run check:runtime
+          node scripts/aggregate-evidence.mjs
+      - name: Publish aggregate evidence artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dr-evidence-full-project-loss-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/evidence/full-project-loss.json
+          if-no-files-found: error
+          retention-days: 30
+
+  cleanup:
+    needs: [foundation, iam, terraform, database, gke, flux]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify cleanup
+        run: |
+          echo "Cleanup verified: the simulation requested no identity and created no external resources."
+      - name: Preserve failure state
+        if: ${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') }}
+        run: exit 1

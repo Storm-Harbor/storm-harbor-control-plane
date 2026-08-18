@@ -1,0 +1,172 @@
+apiVersion: recovery.controlplane.io/v1alpha1
+kind: DisasterRecoveryPlan
+
+metadata:
+  name: organization-primary-dr
+  owner: platform-engineering
+  environment: simulation
+
+spec:
+  mode: simulation
+
+  sources:
+    - role: terraform
+      repository: example/infrastructure
+      ref: refs/heads/main
+      path: terraform
+    - role: gitops
+      repository: example/gitops
+      ref: refs/heads/main
+      path: clusters/production
+
+  provider:
+    type: gcp
+    organizationId: "123456789012"
+    billingAccountId: "000000-000000-000000"
+    primaryProjectId: sample-production
+    recoveryProjectId: sample-dr-sandbox
+    region: europe-west1
+    simulationGuard:
+      requiredLabels:
+        purpose: disaster-recovery-simulation
+        disposable: "true"
+
+  terraform:
+    workingDirectory: terraform
+    backend:
+      bucket: sample-terraform-state
+      prefix: production
+    plan:
+      refreshOnly: true
+      detailedExitCode: true
+
+  database:
+    engine: cloud-sql-postgresql
+    sourceInstance: sample-production-db
+    recoveryInstanceSuffix: -dr-restore
+    backup:
+      strategy: point-in-time
+      maxAgeMinutes: 15
+      crossRegion: true
+    restore:
+      overwriteSource: false
+      validateConnectivity: true
+      validateSchemaChecksum: true
+      validateReadOnlyQuery: true
+
+  gke:
+    sourceCluster: sample-production
+    recoveryClusterSuffix: -dr-sandbox
+    location: europe-west1
+    requirePrivateEndpoint: true
+    requireWorkloadIdentity: true
+
+  iamBackup:
+    vault:
+      provider: gcp-secret-manager
+      projectId: sample-security-vault
+      secretPrefix: dr-iam-snapshot
+      kmsKey: projects/sample-security-vault/locations/europe-west1/keyRings/dr/cryptoKeys/iam-snapshots
+    include:
+      serviceAccounts: true
+      customRoles: true
+      policyBindings: true
+      workloadIdentity: true
+    excludePrivateKeys: true
+    humanAccess: denied
+    retentionDays: 90
+
+  flux:
+    repository: example/gitops
+    branch: main
+    path: clusters/recovery
+    namespace: flux-system
+
+  ai:
+    enabled: false
+    mode: advisory
+    defaultProfile: codex-balanced
+    allowedTaskTypes:
+      - inventory-classification
+      - dependency-inference
+      - recovery-plan-review
+      - evidence-summary
+    profiles:
+      - name: codex-efficient
+        provider: codex-cloud
+        modelTier: efficient
+        model: gpt-5.6-luna
+        reasoningLevel: low
+      - name: codex-balanced
+        provider: codex-cloud
+        modelTier: balanced
+        model: gpt-5.6-terra
+        reasoningLevel: medium
+      - name: codex-frontier
+        provider: codex-cloud
+        modelTier: frontier
+        model: gpt-5.6-sol
+        reasoningLevel: high
+      - name: gemini-balanced
+        provider: gemini-vertex-ai
+        modelTier: balanced
+        model: gemini-3.6-flash
+        reasoningLevel: medium
+      - name: gemini-frontier
+        provider: gemini-vertex-ai
+        modelTier: frontier
+        model: gemini-3.1-pro-preview
+        reasoningLevel: high
+    dataPolicy:
+      redactSecrets: true
+      allowSourceCode: false
+      allowInfrastructureState: false
+      maxPromptBytes: 65536
+      retention: provider-zero-data-retention
+    enforcement:
+      default: advisory
+      blockRecoveryOnProviderFailure: false
+
+  recovery:
+    targetRtoMinutes: 60
+    targetRpoMinutes: 15
+    approvalEnvironment: disaster-recovery
+    phases:
+      - foundation
+      - iam
+      - terraform
+      - database
+      - gke
+      - flux
+      - workloads
+      - validation
+
+  simulation:
+    cadence: "0 3 * * 0"
+    timeZone: Europe/Madrid
+    maxDurationMinutes: 120
+    cleanup: always
+
+  guardrails:
+    killSwitchEnabled: true
+    allowedRecoveryProjects:
+      - sample-dr-sandbox
+    requireDisposableLabels: true
+    requireImmutableSource: true
+    requireSignedEvidence: true
+    maxChangedResources: 100
+    maxDeletedResources: 0
+    maxEstimatedCostUsd: 50
+    allowOrganizationIamChanges: false
+    allowFolderIamChanges: false
+
+  features:
+    terraformDriftDetection: true
+    gcpFoundationRecovery: false
+    iamBackup: true
+    iamRestore: false
+    databaseRecovery: false
+    gkeRecovery: false
+    fluxBootstrap: false
+    periodicSimulation: false
+    realRecovery: false

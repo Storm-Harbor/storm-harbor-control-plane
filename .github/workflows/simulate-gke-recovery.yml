@@ -1,0 +1,54 @@
+name: Simulate - GKE recovery
+
+on:
+  workflow_call:
+    inputs:
+      recovery_cluster: { required: true, type: string }
+      dry_run: { required: false, type: boolean, default: true }
+      confirmation: { required: true, type: string }
+  workflow_dispatch:
+    inputs:
+      recovery_cluster:
+        description: Disposable cluster; must end with -dr-sandbox
+        required: true
+        default: sample-gke-dr-sandbox
+        type: string
+      dry_run:
+        description: Simulate without external mutations
+        required: true
+        default: true
+        type: boolean
+      confirmation:
+        description: Type SIMULATE to confirm
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  gke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DR_CONFIRMATION: ${{ inputs.confirmation }}
+      DR_DRY_RUN: ${{ inputs.dry_run }}
+      DR_SCENARIO: gke-recovery
+      DR_TARGET: ${{ inputs.recovery_cluster }}
+      DR_PHASES: target-identity,private-network,secondary-ranges,quota-and-budget,cluster,workload-identity,operator-install,policy-health
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 26.6.0 }
+      - name: Run deterministic GKE simulation
+        run: |
+          node --run check:runtime
+          node scripts/simulate-recovery.mjs
+      - name: Publish GKE evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: dr-evidence-gke-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: artifacts/evidence/gke-recovery.json
+          if-no-files-found: error
+          retention-days: 30
