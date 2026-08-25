@@ -4,11 +4,11 @@
 
 Recommended description for the **About** field:
 
-> Storm Harbor Control Plane is a federated control plane for Terraform, GCP, Kubernetes and GitOps, with continuous ITSCM readiness and auditable recovery evidence.
+> Technical documentation and safe simulations for the open-source Storm Harbor recovery control plane by iot.EraX.
 
 Recommended website:
 
-`https://ferreiraad.github.io/itscm-mms/`
+`https://storm-harbor.github.io/storm-harbor-control-plane/`
 
 ## Repository topics
 
@@ -30,7 +30,7 @@ rto
 rpo
 ```
 
-The topics represent the problem, architecture, integrations, and measurable outcomes without associating the product with a specific company.
+The topics represent the problem, architecture, integrations, and measurable outcomes. Storm Harbor is an open-source product by [iot.EraX](https://ioterax.com).
 
 ## Short message
 

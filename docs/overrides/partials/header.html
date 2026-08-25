@@ -35,7 +35,7 @@
       </div>
     </div>
     {% if config.extra.brand_by %}
-      <span class="sh-brand-byline">{{ config.extra.brand_by }}</span>
+      <a class="sh-brand-byline" href="{{ config.extra.brand_by.url }}" target="_blank" rel="noreferrer">{{ config.extra.brand_by.label }}</a>
     {% endif %}
     {% if config.theme.palette %}
       {% if not config.theme.palette is mapping %}

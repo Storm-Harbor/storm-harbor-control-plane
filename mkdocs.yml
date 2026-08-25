@@ -54,6 +54,7 @@ nav:
       - Product: product/overview.md
       - Glossary: product/glossary.md
   - Architecture:
+      - Product and repository boundaries: architecture/repository-boundaries.md
       - Control plane: architecture/control-plane.md
       - Federated Source of Truth: architecture/federated-source-of-truth.md
       - Inventory and dependencies: architecture/inventory.md
@@ -113,7 +114,9 @@ extra_javascript:
 
 extra:
   generator: false
-  brand_by: by iot.Erax
+  brand_by:
+    label: by iot.EraX
+    url: https://ioterax.com
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Storm-Harbor/storm-harbor-control-plane
@@ -121,4 +124,4 @@ extra:
   status:
     simulation: Safe simulation
 
-copyright: Storm Harbor Control Plane documentation · by iot.Erax
+copyright: Storm Harbor Control Plane documentation · by <a href="https://ioterax.com" target="_blank" rel="noreferrer">iot.EraX</a>

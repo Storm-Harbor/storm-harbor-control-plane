@@ -1,10 +1,12 @@
-# Disaster Recovery Control Plane
+# Storm Harbor Technical Documentation
 
-[![DR simulation](https://github.com/ferreiraad/itscm-mms/actions/workflows/disaster-recovery-simulation.yml/badge.svg)](https://github.com/ferreiraad/itscm-mms/actions/workflows/disaster-recovery-simulation.yml)
+[![DR simulation](https://github.com/Storm-Harbor/storm-harbor-control-plane/actions/workflows/disaster-recovery-simulation.yml/badge.svg)](https://github.com/Storm-Harbor/storm-harbor-control-plane/actions/workflows/disaster-recovery-simulation.yml)
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-526CFE)](docs/index.md)
 [![Status](https://img.shields.io/badge/status-safe%20simulation-0B7285)](#project-status)
 
-**Disaster Recovery Control Plane** discovers dependencies, continuously assesses recoverability, and orchestrates Disaster Recovery across GitHub, Terraform, Google Cloud, and Kubernetes.
+This repository owns the **Storm Harbor technical documentation site**, architecture contracts, configuration schemas, and safe recovery simulations. It documents a control plane that discovers dependencies, continuously assesses recoverability, and orchestrates Disaster Recovery across GitHub, Terraform, Google Cloud, and Kubernetes.
+
+The customer-facing website, authentication experience, and operational console live in `storm-harbor-app`. Runtime libraries follow `storm-lib-*`; independently deployable runtime services follow `storm-*`.
 
 The product applies a **Federated Source of Truth (FSoT)**: each system remains authoritative in its domain, while the control plane discovers, normalizes, correlates, and reconciles those sources into a unified view of readiness, RTO, RPO, plans, runs, and evidence.
 
@@ -65,7 +67,7 @@ Each transition depends on a health gate. A failure, timeout, policy violation, 
 
 ## Project status
 
-The repository is an **architecture and safe-simulation scaffold**. The current pipelines:
+The repository is a **technical documentation and safe-simulation scaffold**, not the runtime control-plane backend. The current pipelines:
 
 - run only through manual dispatch with the literal confirmation `SIMULATE`;
 - retain `contents: read` and do not request a cloud OIDC token;

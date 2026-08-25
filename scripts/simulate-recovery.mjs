@@ -90,7 +90,7 @@ const evidence = {
     finishedAt: finishedAt.toISOString(),
   },
   source: {
-    repository: env.GITHUB_REPOSITORY ?? 'ferreiraad/itscm-mms',
+    repository: env.GITHUB_REPOSITORY ?? 'Storm-Harbor/storm-harbor-control-plane',
     revision: sourceRevision,
     workflow: env.GITHUB_WORKFLOW ?? 'local-simulation',
     actor: env.GITHUB_ACTOR ?? 'local-user',

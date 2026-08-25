@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/ferreiraad/itscm-mms/blob/develop/config/dr.config.schema.json",
+  "$id": "https://github.com/Storm-Harbor/storm-harbor-control-plane/blob/main/config/dr.config.schema.json",
   "title": "Disaster Recovery Control Plane Plan",
   "type": "object",
   "additionalProperties": false,

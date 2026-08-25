@@ -83,13 +83,14 @@ flowchart LR
 4. **Prove:** preserve signed results outside the recovered failure domain.
 
 !!! info "Built for safe validation first"
-    The current repository is an architecture and simulation scaffold. It validates contracts, ordering, metrics, guardrails, and evidence without credentials or changes to external resources.
+    This repository owns the technical documentation site and a safe simulation scaffold. It validates contracts, ordering, metrics, guardrails, and evidence without credentials or changes to external resources. The customer website and operational console live in `storm-harbor-app`.
 
 ## Explore by goal
 
 | If you want to… | Start here |
 | --- | --- |
 | understand the product and its boundaries | [Product overview](product/overview.md) |
+| understand repository and runtime ownership | [Product and repository boundaries](architecture/repository-boundaries.md) |
 | see why ownership stays distributed | [Federated Source of Truth](architecture/federated-source-of-truth.md) |
 | follow assets from inventory to dependency graph | [Inventory and dependencies](architecture/inventory.md) |
 | understand Kubernetes recovery orchestration | [CRDs and Operator](kubernetes/crds-and-operator.md) |
