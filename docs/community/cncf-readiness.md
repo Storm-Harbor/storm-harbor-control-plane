@@ -14,7 +14,7 @@ The technical repository was created on **2026-08-18**. It reaches six calendar 
 | --- | --- |
 | License | publish Apache 2.0 consistently in the participating repositories |
 | Maintainers | publish names, GitHub identities and affiliations; broaden maintainership over time |
-| Reusable implementation | deliver a Go MVP independent of iot.EraX identity, data and cloud accounts |
+| Reusable implementation | deliver a Go MVP independent of any adopter’s identity, data and cloud accounts |
 | Cloud-native role | explain declarative recovery, controllers and interoperability without claiming to replace Kubernetes |
 | Governance | public contribution process, conduct policy, security reporting and decision ownership |
 | Documentation | English technical documentation, installation, runnable examples and truthful support matrix |

@@ -12,10 +12,10 @@
     <a href="{{ config.extra.homepage | d(nav.homepage.url, true) | url }}" title="{{ config.site_name | e }}" class="md-header__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
       {% include "partials/logo.html" %}
     </a>
-    <label class="md-header__button md-icon" for="__drawer">
+    <button class="md-header__button md-icon dr-nav-toggle" type="button" data-dr-nav-toggle aria-label="Open navigation" aria-controls="dr-primary-navigation" aria-expanded="false">
       {% set icon = config.theme.icon.menu or "material/menu" %}
       {% include ".icons/" ~ icon ~ ".svg" %}
-    </label>
+    </button>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
@@ -34,9 +34,6 @@
         </div>
       </div>
     </div>
-    {% if config.extra.brand_by %}
-      <a class="sh-brand-byline" href="{{ config.extra.brand_by.url }}" target="_blank" rel="noreferrer">{{ config.extra.brand_by.label }}</a>
-    {% endif %}
     {% if config.theme.palette %}
       {% if not config.theme.palette is mapping %}
         {% include "partials/palette.html" %}

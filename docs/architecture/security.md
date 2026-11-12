@@ -38,7 +38,7 @@ flowchart LR
 | Control | Expected implementation |
 | --- | --- |
 | Tenant isolation | tenant ID in every key, policy, and query; tests against IDOR |
-| Authentication | configured identity adapter plus scoped source installations; short sessions; no mandatory iot.EraX identity |
+| Authentication | configured identity adapter plus scoped source installations; short sessions; configurable identity provider |
 | Cloud access | provider-specific short-lived credentials and federation where supported; restricted audience, subject and action scope |
 | Authorization | product RBAC + policy by action/resource/environment |
 | Approval | requester/approver segregation and approval expiration |

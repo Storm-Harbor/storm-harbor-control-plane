@@ -1,6 +1,6 @@
 # Sponsorship and sustainability
 
-Storm Harbor welcomes support for its open-source recovery platform. The intended receiving entity is **ioterax LLC (United States)**, as designated by the project owner. An existing Stripe account is intended for payment processing.
+Storm Harbor welcomes support for its open-source recovery platform. The project owner manages receiving-account verification and onboarding privately. An existing Stripe account is intended for payment processing.
 
 ## Current status
 

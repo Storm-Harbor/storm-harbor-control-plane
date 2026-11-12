@@ -20,6 +20,7 @@
     "node": "26.6.0"
   },
   "scripts": {
+    "test:docs-browser": "playwright test",
     "check:runtime": "node scripts/check-runtime.mjs",
     "test": "node --test test/disaster-recovery/*.test.mjs",
     "test:disaster-recovery": "node --test test/disaster-recovery/*.test.mjs",
@@ -27,5 +28,8 @@
     "test:mutation": "node scripts/manual-security-check.mjs mutation",
     "test:pentest": "node scripts/manual-security-check.mjs pentest",
     "test:security:owasp": "node scripts/manual-security-check.mjs owasp"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0"
   }
 }

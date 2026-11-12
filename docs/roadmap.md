@@ -42,4 +42,4 @@ Next bounded deliveries are the producer's manual merge and immutable release, t
 
 ## Community and sustainability
 
-Prepare [sponsorship](community/sponsorship.md) for ioterax LLC (US) using verified payment destinations, and maintain [CNCF readiness](community/cncf-readiness.md) with actual implementation/adoption evidence. These tracks do not imply active payments, CNCF acceptance or production support.
+Prepare [sponsorship](community/sponsorship.md) using verified payment destinations, and maintain [CNCF readiness](community/cncf-readiness.md) with actual implementation/adoption evidence. These tracks do not imply active payments, CNCF acceptance or production support.

@@ -6,7 +6,7 @@
 
 This repository owns the **Storm Harbor technical documentation site**, architecture contracts, configuration schemas, and safe recovery simulations. Storm Harbor is an organization-independent, declarative recovery control plane designed for private projects and multicloud environments spanning AWS, Azure, DigitalOcean, Oracle Cloud and Google Cloud through versioned adapters.
 
-The [platform contract](docs/architecture/platform-contract.md) defines the accepted direction: YAML journeys, Go 1.26.x runtime components, extensible resources/controllers, optional project-owned AI/RAG/CLI integrations, and recoverability with auditable execution. iot.EraX is its creator and an initial consumer, not a mandatory identity or knowledge service. **These are design goals; the current executable code is a GCP-shaped Node.js simulation scaffold.**
+The [platform contract](docs/architecture/platform-contract.md) defines the accepted direction: YAML journeys, Go 1.26.x runtime components, extensible resources/controllers, optional project-owned AI/RAG/CLI integrations, and recoverability with auditable execution. **These are design goals; the current executable code is a GCP-shaped Node.js simulation scaffold.**
 
 The customer-facing website, authentication experience, and operational console live in `storm-harbor-app`. Runtime libraries follow `storm-lib-*`; independently deployable runtime services follow `storm-*`.
 
@@ -116,6 +116,11 @@ The MkDocs portal contains an executive overview, diagrams, architecture, the fe
 The script creates or reuses `.venv-docs`, installs the pinned MkDocs versions, and starts the server. Additional arguments are forwarded to `mkdocs serve`.
 
 Open `http://127.0.0.1:8000`. The sidebar has collapsible sections and a persistent menu button on desktop as well.
+
+To validate the built navigation, run a strict MkDocs build, then `npm ci`,
+`npx playwright install chromium` and `npm run test:docs-browser`. The pinned
+browser suite reads the real `site/` artifact at its configured Pages origin to
+exercise instant navigation, mobile submenus, keyboard access and storage failure.
 
 - [Documentation home](docs/index.md)
 - [Control plane architecture](docs/architecture/control-plane.md)

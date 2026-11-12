@@ -36,7 +36,7 @@ rto
 rpo
 ```
 
-The topics represent the problem, architecture, integrations, and measurable outcomes. Storm Harbor is an open-source product by [iot.EraX](https://ioterax.com).
+The topics represent the problem, architecture, integrations, and measurable outcomes. Storm Harbor is an independent open-source project.
 
 ## Short message
 
@@ -44,4 +44,4 @@ The topics represent the problem, architecture, integrations, and measurable out
 
 ## Independence
 
-Storm Harbor is created by iot.EraX and designed for any organization, including private projects and project-owned knowledge. iot.EraX services are optional integrations. The accepted runtime language is Go 1.26.x. See [sponsorship](community/sponsorship.md) and [CNCF readiness](community/cncf-readiness.md); the project is not currently affiliated with CNCF.
+Storm Harbor is designed for any organization, including private projects and project-owned knowledge. Identity and intelligence services are configurable integrations. The accepted runtime language is Go 1.26.x. See [sponsorship](community/sponsorship.md) and [CNCF readiness](community/cncf-readiness.md); the project is not currently affiliated with CNCF.

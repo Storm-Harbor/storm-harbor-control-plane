@@ -6,7 +6,7 @@ The first provider-neutral Go configuration producer is being delivered in [stor
 
 ## Independent organizations and private projects
 
-Storm Harbor is a reusable, organization-independent recovery control plane. iot.EraX is its creator and an initial consumer, not a required identity provider, cloud account, source repository or knowledge service.
+Storm Harbor is a reusable, organization-independent recovery control plane. No specific identity provider, cloud account, source repository or knowledge service is required.
 
 An organization can authorize selected private repositories without making their contents public or transferring them to the Storm Harbor GitHub organization. Every installation, resource, query, task, cache entry, credential reference and evidence bundle must carry an effective organization/project scope. Cross-scope access requires an explicit policy decision and independent authorization checks.
 
