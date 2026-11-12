@@ -53,6 +53,11 @@ nav:
       - Home: index.md
       - Product: product/overview.md
       - Glossary: product/glossary.md
+  - Getting Started:
+      - Start here: getting-started/index.md
+      - YAML structure: getting-started/yaml.md
+      - Policies and journey: getting-started/policies-and-journey.md
+      - GCP targets: getting-started/gcp-targets.md
   - Architecture:
       - Platform contract: architecture/platform-contract.md
       - Engineering standards: architecture/engineering-standards.md
@@ -63,6 +68,9 @@ nav:
       - Inventory and dependencies: architecture/inventory.md
       - AI providers: architecture/ai-providers.md
       - Security: architecture/security.md
+      - GitHub App and execution: architecture/github-execution.md
+      - External secrets: architecture/external-secrets.md
+      - Accepted decisions: architecture/accepted-decisions.md
   - Kubernetes:
       - CRDs and Operator: kubernetes/crds-and-operator.md
   - Operations:
