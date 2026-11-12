@@ -119,12 +119,12 @@ plugins:
       minify_html: true
 
 extra_css:
-  - stylesheets/extra.css
+  - stylesheets/extra.css?v=2
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/@joint/core@4.3.0/dist/joint.js
   - javascripts/joint-diagrams.js
-  - javascripts/navigation-toggle.js
+  - javascripts/navigation-toggle.js?v=2
 
 extra:
   generator: false
