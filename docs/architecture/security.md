@@ -1,5 +1,7 @@
 # Security architecture
 
+The [platform contract](platform-contract.md) defines organization/project isolation, private-source boundaries, optional AI/RAG/CLI and multicloud capability checks. GCP-specific names below illustrate the original mock scenario; each production provider needs its own identity and minimum-permission mapping. No production adapter is implemented here yet.
+
 ## Trust boundaries
 
 ```joint
@@ -36,8 +38,8 @@ flowchart LR
 | Control | Expected implementation |
 | --- | --- |
 | Tenant isolation | tenant ID in every key, policy, and query; tests against IDOR |
-| Authentication | GitHub App and corporate identity; short sessions |
-| Cloud access | OIDC/WIF, no persistent keys, restricted audience and subject |
+| Authentication | configured identity adapter plus scoped source installations; short sessions; no mandatory iot.EraX identity |
+| Cloud access | provider-specific short-lived credentials and federation where supported; restricted audience, subject and action scope |
 | Authorization | product RBAC + policy by action/resource/environment |
 | Approval | requester/approver segregation and approval expiration |
 | Secrets | resource references only; redaction before logging/evidence |
@@ -45,6 +47,9 @@ flowchart LR
 | Runtime | egress allowlist, network policy, read-only filesystem |
 | Evidence | hash, signature, retention, WORM, and an independent project |
 | Emergency | global kill switch and audited, time-bound break-glass access |
+| Private knowledge | project-owned retrieval; minimize authorized results; no implicit KB replication, external AI fallback or prompt export |
+| Extensions | versioned schemas and controller digests, bounded workers and credentials; no unrestricted shell or in-process untrusted plugin |
+| Multicloud | preflight compatibility of data, identity, networking and recovery mappings; no assumption that managed services are portable |
 
 ## Authorization order
 

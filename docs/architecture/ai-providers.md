@@ -1,179 +1,41 @@
-# AI providers: Codex Cloud and Gemini
+# Project-owned AI, RAG and CLI integrations
 
-## Purpose and boundary
+## Purpose and current status
 
-AI in Storm Harbor Control Plane is an **advisory** layer for interpreting data that has already been discovered. It receives no cloud authority, does not run Terraform, does not apply manifests, and does not approve recovery.
+AI is optional and advisory. Every project can bring its own AI service, private retrieval API or bounded CLI through a versioned adapter. No AI provider, model family, knowledge service or iot.EraX account is mandatory. The Go integration runtime and plugin registry are planned; current Node scripts only simulate provider selection and make no external calls.
 
-Allowed use cases:
+The old Codex/Gemini profile identifiers and model strings in mock fixtures are test data, not verified current model recommendations or evidence of supported provider APIs. Production registries must validate the chosen provider's current capabilities and freeze exact adapter/model versions before activation.
 
-| AI task type | Minimum input | Structured output |
+## Integration contract
+
+Each project chooses endpoint/transport, adapter version, identity reference, permitted task types and tools, input/output schemas, timeout, byte/cost limits, data classes, egress and retention policy. A CLI adapter runs in a bounded worker with a fixed executable and argument schema; it never exposes an unrestricted shell.
+
+| Task | Minimum authorized input | Structured proposal |
 | --- | --- | --- |
-| `inventory-classification` | asset metadata and labels | service, type, suggested criticality, and confidence |
-| `dependency-inference` | redacted technical relationships | suggested edges, confidence, and explanation |
-| `recovery-plan-review` | redacted effective plan | gaps, severity, and mitigation |
-| `evidence-summary` | manifest and phase results | executive summary and findings |
+| Inventory classification | selected asset metadata | service/type/criticality with provenance |
+| Dependency inference | approved technical relationships | suggested edges and confidence |
+| Recovery-plan review | redacted frozen plan | gaps and proposed mitigations |
+| Evidence summary | redacted phase results | findings linked to evidence references |
+| Private retrieval | a scoped query and authorized context | minimal result references/excerpts allowed by the project |
 
-Every suggestion retains provenance, confidence, and `PROPOSED` status until human confirmation or an independent deterministic rule validates it.
+Model selection, reasoning settings and task responsibility are separate concerns. Adapter capabilities are validated rather than forcing a universal reasoning enum onto every provider. Untrusted results cannot change authorization, controller code, approved targets or execution plans.
 
-## Provider-neutral architecture
+## Private knowledge boundary
 
-```joint
-flowchart LR
-  P[Pipeline or control plane]
-  D[Data policy and redaction]
-  R[Profile resolver]
-  S[Structured prompt contract]
-  O[Codex Cloud adapter]
-  G[Gemini Vertex AI adapter]
-  A[Gemini API adapter]
-  V[Schema and safety validation]
-  H[Human review]
-  E[AI evidence]
+The project retains its knowledge base. Retrieval can execute inside its environment and return only expressly authorized minimal results. Registration does not upload a corpus, create shared memory or allow another project's queries. Caches and tool state are scoped to organization/project and governed by retention.
 
-  P --> D --> R --> S
-  S --> O
-  S --> G
-  S --> A
-  O --> V
-  G --> V
-  A --> V
-  V --> H --> E
+Before each external call, enforce data classification, field allowlists, redaction, byte limits, destination policy and authenticated project scope. Secrets, credentials, raw Terraform state and kubeconfigs are prohibited. Retrieved text is untrusted data; embedded instructions cannot grant tool permissions. No alternate provider receives content automatically when the configured provider fails.
 
-  classDef pipeline fill:#f4f4f4,stroke:#c0000d,color:#1d1d1b,stroke-width:2px;
-  classDef policy fill:#f7d7da,stroke:#e30613,color:#1d1d1b,stroke-width:2px;
-  classDef provider fill:#eeeeee,stroke:#777777,color:#1d1d1b,stroke-width:2px;
-  classDef proof fill:#eeeeee,stroke:#666666,color:#1d1d1b,stroke-width:2px;
-  class P pipeline;
-  class D,R,S policy;
-  class O,G,A provider;
-  class V,H,E proof;
-```
+Evidence records redacted decisions, selected references, adapter/model version when applicable, latency/usage and digests. It does not persist raw knowledge documents, private internal reasoning or complete prompts by default. A digest alone does not authorize disclosure of its source.
 
-## Separate settings
+## hub-ai and identity
 
-Do not conflate quality, reasoning depth, and AI responsibility:
+`hub-ai`/Maya is an optional integration still under development. iot.EraX can use it under the same contract as any other project's service. Connect to its authenticated, scoped API; do not directly read its databases, vector stores or repository files. `api-auth` is likewise an optional identity integration, not the universal Storm Harbor identity service.
 
-| Dimension | Values | Function |
-| --- | --- | --- |
-| `provider` | `codex-cloud`, `gemini-vertex-ai`, `gemini-api` | endpoint, identity, and adapter contract |
-| `modelTier` | `efficient`, `balanced`, `frontier`, `custom` | portable capability/cost/latency profile |
-| `model` | resolved or custom ID | exact model sent to the provider |
-| `reasoningLevel` | `low`, `medium`, `high` | portable reasoning depth shared by adapters |
-| `taskType` | four allowlisted types | limited responsibility of the call |
-| `mode` | `advisory`, `evaluation` | assisted production use or offline evaluation |
+## Execution authority and failure
 
-The tier must not silently select “the newest model.” A versioned registry resolves tier → model; the run freezes the model, registry version, and reasoning level in the execution plan and evidence bundle.
+AI may explain findings and propose a plan or allowlisted tool request. The deterministic Go orchestrator independently verifies actor, effective scope, schema, target, policy, approval, idempotency and kill switch. AI output cannot itself approve a recovery. An approved frozen recovery must run when AI is disabled or unavailable; failures create findings and use deterministic fallback behavior.
 
-## Initial registry
+## Validation before activation
 
-| Provider | Efficient | Balanced | Frontier |
-| --- | --- | --- | --- |
-| Codex Cloud | `gpt-5.6-luna` | `gpt-5.6-terra` | `gpt-5.6-sol` |
-| Gemini | `gemini-3.5-flash-lite` | `gemini-3.6-flash` | `gemini-3.1-pro-preview` |
-
-The IDs are initial defaults, not a permanent contract. Changes require evaluations and a new registry version. Preview models must be blocked in real recovery unless an explicit policy permits them.
-
-OpenAI documentation positions Luna for high volume, Terra for balance, and Sol for maximum capability; the GPT-5.6 family exposes `none`, `low`, `medium`, `high`, `xhigh`, and `max` effort levels. Storm Harbor Control Plane initially uses the portable intersection `low|medium|high`. [OpenAI model guidance](https://developers.openai.com/api/docs/guides/latest-model/)
-
-Current Gemini models use `thinking_level`, with support depending on the model; the portable layer also restricts values to `low|medium|high`. [Gemini thinking](https://ai.google.dev/gemini-api/docs/thinking)
-
-## Reasoning-level translation
-
-```joint
-flowchart TB
-  L[Portable reasoningLevel]
-  LOW[low]
-  MED[medium]
-  HIGH[high]
-  OE[OpenAI reasoning.effort]
-  GT[Gemini thinking_level]
-
-  L --> LOW
-  L --> MED
-  L --> HIGH
-  LOW --> OE
-  MED --> OE
-  HIGH --> OE
-  LOW --> GT
-  MED --> GT
-  HIGH --> GT
-
-  classDef portable fill:#f7d7da,stroke:#e30613,color:#1d1d1b,stroke-width:2px;
-  classDef provider fill:#f4f4f4,stroke:#c0000d,color:#1d1d1b,stroke-width:2px;
-  class L,LOW,MED,HIGH portable;
-  class OE,GT provider;
-```
-
-For `custom`, the adapter checks its capabilities and rejects an invalid combination before sending content. Never send `thinking_level` and `thinking_budget` to Gemini simultaneously.
-
-## Configuration example
-
-```yaml
-ai:
-  enabled: false
-  mode: advisory
-  defaultProfile: codex-balanced
-  allowedTaskTypes:
-    - inventory-classification
-    - dependency-inference
-    - recovery-plan-review
-    - evidence-summary
-  profiles:
-    - name: codex-balanced
-      provider: codex-cloud
-      modelTier: balanced
-      model: gpt-5.6-terra
-      reasoningLevel: medium
-    - name: gemini-balanced
-      provider: gemini-vertex-ai
-      modelTier: balanced
-      model: gemini-3.6-flash
-      reasoningLevel: medium
-  dataPolicy:
-    redactSecrets: true
-    allowSourceCode: false
-    allowInfrastructureState: false
-    maxPromptBytes: 65536
-    retention: provider-zero-data-retention
-  enforcement:
-    default: advisory
-    blockRecoveryOnProviderFailure: false
-```
-
-## Identity and secrets
-
-- `codex-cloud`: token/API credential resolved at runtime through a secret reference;
-- `gemini-vertex-ai`: prefer OIDC/WIF and a short-lived GCP identity;
-- `gemini-api`: API key only in a secret manager and only when Vertex AI is unsuitable;
-- no token enters YAML, GitHub input, logs, or artifacts;
-- the current mock job neither requests nor reads any of these credentials.
-
-## Data policy
-
-Before the call:
-
-1. reduce data to the minimum required for the `taskType`;
-2. remove secrets, tokens, kubeconfig files, Terraform state, and personal data;
-3. classify it as `metadata-only` or `redacted-config`;
-4. apply a byte limit and field allowlist;
-5. calculate a digest of the redacted input;
-6. require JSON Schema output;
-7. validate references to existing assets/findings;
-8. send it for human review.
-
-Do not persist internal reasoning. Record the redacted input, structured final output, usage, latency, effective model, policy decision, and digests.
-
-## Provider failure
-
-AI unavailability must never block an already approved emergency recovery. `required-for-planning` may prevent a plan from being published before an incident, but the frozen executable run must remain independent of the provider. During incidents, an AI failure creates a finding and triggers a deterministic fallback.
-
-## Evaluations before activation
-
-- classification and dependency-edge accuracy;
-- false positives in critical findings;
-- schema compliance;
-- secret-leakage canaries;
-- grounding in supplied asset IDs;
-- latency, tokens, and cost per task type;
-- comparison by provider/tier/reasoning level;
-- regression testing when the registry changes models.
+Test cross-project retrieval denial, prompt/response leakage canaries, output schema/reference validation, bounded CLI arguments and egress, injected instructions in retrieved text, deterministic behavior without AI, cost/time limits and compatibility across adapter upgrades. Private-corpus evaluations stay in the owning project's authorized environment.

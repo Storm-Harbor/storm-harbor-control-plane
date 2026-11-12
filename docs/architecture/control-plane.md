@@ -2,7 +2,7 @@
 
 ## Primary decision
 
-The control plane runs outside the GKE environment it may need to recover. It does not replace GitHub, Terraform, GCP, Kubernetes, or the evidence store: it maintains a materialized model with provenance and freshness, and orchestrates operations through adapters.
+The control plane runs outside the failure domains it may need to recover. It maintains a materialized model with provenance and freshness, and orchestrates operations through versioned adapters. Its Go runtime and core resource model are independent of cloud, organization, identity and AI vendors; see the [platform contract](platform-contract.md).
 
 [Download the editable draw.io XML diagram](../assets/diagrams/control-plane.drawio.xml){ .md-button .md-button--primary }
 
@@ -21,9 +21,9 @@ flowchart TB
     TG[Terraform repository<br/>desired infrastructure]
     TB[Remote backend<br/>Terraform state]
     GO[GitOps repository<br/>desired workloads]
-    GA[GCP APIs and CAI<br/>actual cloud state]
+    GA[Cloud provider APIs<br/>actual cloud state]
     KA[Kubernetes API<br/>actual cluster state]
-    VA[Secret Manager and KMS<br/>secret authority]
+    VA[Secret and key services<br/>secret authority]
   end
 
   subgraph L3[DR CONTROL PLANE — OUTSIDE RECOVERY TARGET]
@@ -41,7 +41,7 @@ flowchart TB
 
   subgraph L4[EXECUTION]
     TF[Terraform runner]
-    CP[GCP foundation adapter]
+    CP[Cloud foundation adapters]
     DB[Database recovery adapter]
     KO[Kubernetes DR Operator]
     FX[FluxCD bootstrap adapter]
@@ -100,9 +100,9 @@ All connectors are straight in the portal and orthogonal in the draw.io XML. Col
 | Evidence service | record inputs, decisions, metrics, and outputs | store secrets or tokens |
 | Plugin registry | resolve adapter capabilities and versions | load an unsigned plugin in production |
 
-## GCP-first topology
+## GCP topology example
 
-The initial deployment should use a **dedicated management/DR project**, separate from protected projects. The database, queue, signing keys, and evidence should span regions or projects according to the threat model. For SaaS, the control plane can move to a vendor-operated account without changing domain contracts.
+The following is a provider-specific topology example, not a cloud requirement. A GCP deployment can use a **dedicated management/DR project**, separate from protected projects. Equivalent adapter-specific boundaries apply to AWS accounts, Azure subscriptions, DigitalOcean projects and OCI compartments. Placement of the database, queue, keys and evidence follows the modeled failure domain, including provider-independent availability for provider-wide recovery. Deployment mode and hosting are separate decisions.
 
 ```joint
 flowchart LR

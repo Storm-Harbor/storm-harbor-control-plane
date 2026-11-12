@@ -1,44 +1,39 @@
 # Roadmap
 
-## Product phases
+The [platform contract](architecture/platform-contract.md) defines the accepted direction. Go 1.26.x is the runtime baseline; technical documentation stays in English. No production recovery engine, cloud adapter, extension registry or Kubernetes Operator exists yet.
 
-```joint
-flowchart LR
-  M0[M0<br/>contracts and safe mocks]
-  M1[M1<br/>onboarding and inventory]
-  M2[M2<br/>continuous discovery]
-  M3[M3<br/>Kubernetes Operator]
-  M4[M4<br/>disposable recovery tests]
-  M5[M5<br/>approval-gated recovery]
-  M6[M6<br/>multi-cloud adapters]
-  M0 --> M1 --> M2 --> M3 --> M4 --> M5 --> M6
+| Milestone | Verifiable outcome | Current state |
+| --- | --- | --- |
+| M0: public foundations | website, English docs, schema/mock checks, clear status and community policies | documentation and legacy mocks exist; publication in progress |
+| M1: Go declarative core | versioned provider-neutral resources, schema validation, Go SDK/CLI and configuration migration | planned |
+| M2: private onboarding and inventory | organization/project isolation, configurable identity, authorized private sources and dependency graph | planned |
+| M3: adapters and AI integration | capability/version registry; independent cloud adapters and optional project-owned AI/RAG/CLI | planned |
+| M4: extensions and Kubernetes | custom kinds/Go controllers, admission/versioning, native CRDs and Operator | planned |
+| M5: isolated recovery | disposable targets, verified restore, cleanup under partial failure and independent evidence | planned |
+| M6: authorized real recovery | immutable approvals, ephemeral access, deterministic execution, kill switch and runbooks | planned |
+| M7: validated multicloud mappings | supported source/target combinations across AWS, Azure, DigitalOcean, OCI and GCP | planned |
 
-  classDef done fill:#fbe6e8,stroke:#e30613,color:#1d1d1b,stroke-width:2px;
-  classDef next fill:#f4f4f4,stroke:#c0000d,color:#1d1d1b,stroke-width:2px;
-  classDef later fill:#f4f4f4,stroke:#777777,color:#1d1d1b,stroke-width:2px;
-  class M0 done;
-  class M1,M2 next;
-  class M3,M4,M5,M6 later;
-```
+Cloud independence and multicloud topology belong in M1 contracts. M7 proves concrete cross-cloud combinations; earlier adapters must not require a GCP-shaped core. Managed-service portability is explicit and tested rather than inferred from provider names.
 
-## Definition of done by milestone
+## Migration work
 
-| Milestone | Verifiable outcome |
-| --- | --- |
-| M0 | tested schemas, documentation, safe pipelines, and mock evidence |
-| M1 | tenant-isolated installation, allowlist, and editable inventory |
-| M2 | periodic reconciliation with provenance, freshness, and drift |
-| M3 | versioned CRDs, idempotent Operator, and tested status and finalizers |
-| M4 | disposable GCP project created, recovered, validated, and removed |
-| M5 | real execution protected by approvals, WIF, policy, and break-glass access |
-| M6 | new providers without changes to the central domain model |
+- Preserve existing Node simulation fixtures until Go equivalents demonstrate behavior and guardrail parity.
+- Replace the GCP-specific configuration through a new version with migration fixtures, not an expanded provider enum alone.
+- Replace the current Next.js authentication/BFF runtime with a Go boundary that supports configurable identity and preserves secure session behavior.
+- Keep public website generation separate from application runtimes and exclude private/authenticated routes from Pages artifacts.
+- Introduce cloud integrations independently with an honest discovery/simulation/recovery support matrix.
 
 ## Criteria for leaving mock mode
 
-- reviewed threat model;
-- proven isolation and cleanup during partial failure;
-- tested quotas, budget, and kill switch;
-- minimum permissions documented by phase;
-- evidence store outside the failure domain;
-- approved incident and rollback runbooks;
-- at least three consecutive simulations within the defined objective.
+- reviewed threat model and organization/project isolation tests;
+- proven cleanup, cancellation and idempotency during partial failure;
+- tested quotas, budget and kill switch;
+- minimum permissions and secret references documented for each provider/phase;
+- control plane, identity and evidence available outside the modeled failure domains;
+- verified source-to-target data, network and service compatibility;
+- approved incident/rollback runbooks and measured restore objectives;
+- at least three consecutive isolated exercises meeting their defined objectives.
+
+## Community and sustainability
+
+Prepare [sponsorship](community/sponsorship.md) for ioterax LLC (US) using verified payment destinations, and maintain [CNCF readiness](community/cncf-readiness.md) with actual implementation/adoption evidence. These tracks do not imply active payments, CNCF acceptance or production support.

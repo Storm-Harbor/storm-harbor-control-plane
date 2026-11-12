@@ -1,8 +1,10 @@
 # CRDs and Kubernetes Operator
 
+Status: proposed contracts, not installable CRDs or a running Operator. The implementation language is Go 1.26.x. User-defined kinds and controllers are part of the [resource extension model](../architecture/extensibility.md); native Kubernetes CRDs are one integration rather than a prerequisite for the external control plane.
+
 ## Role in the architecture
 
-The Operator is the product's Kubernetes specialist. It runs a control loop inside each managed cluster and reconciles Custom Resources. The external orchestrator creates or monitors those resources, but remains responsible for the global DAG that includes GCP, Terraform, IAM, and databases.
+The Operator is the product's Kubernetes specialist. It will run a control loop inside each managed cluster and reconcile Custom Resources. The external orchestrator creates or monitors those resources and owns the global DAG across cloud providers, Terraform, identity, databases and applications. GKE-specific examples below illustrate one adapter; other Kubernetes distributions must not require GCP identifiers.
 
 ```joint
 flowchart LR

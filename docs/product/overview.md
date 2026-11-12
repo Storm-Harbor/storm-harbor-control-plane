@@ -2,7 +2,9 @@
 
 ## Definition
 
-Storm Harbor Control Plane is a **Continuous Disaster Recovery Readiness** platform. Its primary outcome is not merely to perform restoration: it uses current data to show whether each service is recoverable and which risks prevent it from meeting RTO and RPO.
+Storm Harbor is an **organization-independent, declarative recovery control plane**. It continuously assesses whether services can meet RTO/RPO, plans and exercises recovery, and is designed to restore environments through authorized, auditable reconciliation.
+
+The [platform contract](../architecture/platform-contract.md) makes cloud independence, private projects, optional project-owned AI/RAG/CLI, Go 1.26.x runtime components and YAML journeys explicit. AWS, Azure, DigitalOcean, Oracle Cloud and GCP are adapter targets; production support for these providers is not implemented in this scaffold.
 
 ## Functional scope
 
@@ -11,7 +13,7 @@ flowchart TB
   E[Experience<br/>portal, API, CLI, and GitHub App]
   G[Governance<br/>services, owners, tiers, RTO, and RPO]
   C[Control plane<br/>inventory, graph, policy, and orchestration]
-  A[Adapters<br/>GitHub, Terraform, GCP, Kubernetes, and FluxCD]
+    A[Versioned adapters<br/>sources, clouds, data, Kubernetes, optional AI]
   R[Recovery targets<br/>foundation, data, cluster, and workloads]
   P[Proof<br/>metrics, logs, artifacts, and evidence]
 
@@ -53,7 +55,10 @@ Future integrations may open incidents, record changes, and synchronize CMDB att
 5. **Idempotent:** repeating a phase produces the same desired state.
 6. **Evidence first:** every decision and transition remains explainable after an incident.
 7. **Extensible:** providers and engines integrate through versioned adapter contracts.
+8. **Private by default:** each organization retains its repositories, knowledge and operational data.
+9. **Declarative:** UI and CLI follow the same versioned YAML/resource contracts.
+10. **Vendor-independent:** cloud, identity and AI choices belong behind adapters.
 
 ## Intended experience
 
-A user installs the GitHub App, authorizes repositories, and connects a GCP organization or projects through workload identity. The product proposes an inventory, requests confirmation of ownership and dependencies, calculates gaps, and recommends the first safe exercise. Real recovery is never enabled implicitly.
+A user authorizes selected private repositories, connects cloud accounts through scoped adapters, and optionally connects project-owned AI/RAG/CLI. The guided UI and CLI share a versioned YAML configuration: discover, confirm inventory, set objectives, plan, validate, simulate, approve, recover, verify and reconcile. Source revisions and adapter digests are frozen for every run. Cross-cloud recovery requires explicit compatibility and health checks; real recovery is never enabled implicitly.
