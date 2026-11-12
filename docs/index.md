@@ -9,15 +9,15 @@ hide:
 <section class="home-hero" aria-labelledby="home-title">
   <img class="home-hero__logo" src="assets/storm-harbor-logo.png" alt="">
   <div class="home-hero__content">
-    <p class="home-hero__eyebrow">Continuous recovery readiness</p>
+    <p class="home-hero__eyebrow">Declarative multicloud recovery</p>
     <h1 id="home-title">Storm Harbor <span>Control Plane</span></h1>
     <p class="home-hero__lead">Know what will recover before an incident.</p>
-    <p class="home-hero__summary">Connect repositories, cloud infrastructure, clusters, backups, and policies in one live view. Find gaps against RTO and RPO, rehearse safely, and keep the evidence.</p>
+    <p class="home-hero__summary">A cloud-independent recovery control plane for private projects: versioned YAML journeys, Go controllers, optional project-owned AI and auditable recovery. Current code provides safe simulations; production adapters are still planned.</p>
     <div class="home-hero__actions">
       <a href="architecture/control-plane/" class="md-button md-button--primary">See how it works</a>
       <a href="operations/pipelines/" class="md-button">Explore safe simulations</a>
     </div>
-    <p class="home-hero__integrations">GitHub <span aria-hidden="true">·</span> Terraform <span aria-hidden="true">·</span> Google Cloud <span aria-hidden="true">·</span> Kubernetes</p>
+    <p class="home-hero__integrations">GitHub <span aria-hidden="true">·</span> Terraform <span aria-hidden="true">·</span> AWS · Azure · DigitalOcean · Oracle Cloud · GCP <span aria-hidden="true">·</span> Kubernetes</p>
   </div>
 </section>
 
@@ -48,7 +48,7 @@ flowchart LR
   subgraph S[AUTHORITATIVE SOURCES]
     GH[GitHub<br/>plans and desired state]
     TF[Terraform backend<br/>runtime state]
-    GC[GCP APIs<br/>cloud actual state]
+    GC[Cloud adapters<br/>actual state]
     KA[Kubernetes API<br/>cluster actual state]
     ES[Evidence store<br/>immutable proof]
   end
@@ -96,3 +96,7 @@ flowchart LR
 | understand Kubernetes recovery orchestration | [CRDs and Operator](kubernetes/crds-and-operator.md) |
 | inspect safe recovery exercises | [Simulation pipelines](operations/pipelines.md) |
 | measure RTO, RPO, and evidence | [Recovery evidence](operations/evidence.md) |
+
+## Platform direction
+
+Read the [platform contract](architecture/platform-contract.md), [custom resource/controller model](architecture/extensibility.md), [private AI integration](architecture/ai-providers.md), [YAML configuration journey](configuration.md) and [delivery roadmap](roadmap.md). Technical documentation is maintained in English.

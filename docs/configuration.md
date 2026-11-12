@@ -6,7 +6,13 @@ Use a versioned YAML document as the primary contract, validated by JSON Schema.
 
 An environment-variable-only configuration looks simple, but becomes difficult to validate and audit across multiple repositories, projects, phases, and feature toggles. YAML keeps relationships explicit; JSON Schema provides validation and allows invalid plans to be rejected before execution.
 
-`dr.config.yaml` is the global Storm Harbor Control Plane contract, even though it uses the `apiVersion`/`kind` convention. It does not automatically become a Kubernetes object. The control plane validates and freezes this plan, then materializes only the Kubernetes portion as `DisasterRecoveryPlan`, `RecoveryTarget`, and `RecoveryRun` after the corresponding CRDs are installed on the API server.
+`dr.config.yaml` is the journey configuration, even though it uses the `apiVersion`/`kind` convention. It does not automatically become a Kubernetes object. The planned Go control plane validates and freezes it, then materializes only the Kubernetes portion as native resources after the corresponding CRDs are installed. See the [platform contract](architecture/platform-contract.md) and [resource extensibility](architecture/extensibility.md).
+
+**Current compatibility boundary:** the checked-in schema/example is the GCP-specific safe-simulation contract. It is not yet a provider-neutral journey engine. It must remain stable while a new version introduces cloud adapter references, organization/project scope, custom resource definitions and private AI/RAG/CLI integration. Existing Node simulations are transitional test fixtures, not the official runtime architecture.
+
+## Guided journey
+
+The UI and CLI use the same YAML/schema rather than separate workflow definitions. The journey connects private sources and cloud adapters, confirms inventory and dependencies, defines objectives and recovery mappings, validates capabilities, simulates, requests approval, recovers and verifies evidence. Every run freezes configuration, source commits, schemas and adapter/controller digests. Status is observed data, not a second configuration source. Technical documentation is maintained in English.
 
 ## Configuration layers
 

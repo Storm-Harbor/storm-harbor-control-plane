@@ -4,7 +4,9 @@
 [![Documentation](https://img.shields.io/badge/docs-MkDocs-526CFE)](docs/index.md)
 [![Status](https://img.shields.io/badge/status-safe%20simulation-0B7285)](#project-status)
 
-This repository owns the **Storm Harbor technical documentation site**, architecture contracts, configuration schemas, and safe recovery simulations. It documents a control plane that discovers dependencies, continuously assesses recoverability, and orchestrates Disaster Recovery across GitHub, Terraform, Google Cloud, and Kubernetes.
+This repository owns the **Storm Harbor technical documentation site**, architecture contracts, configuration schemas, and safe recovery simulations. Storm Harbor is an organization-independent, declarative recovery control plane designed for private projects and multicloud environments spanning AWS, Azure, DigitalOcean, Oracle Cloud and Google Cloud through versioned adapters.
+
+The [platform contract](docs/architecture/platform-contract.md) defines the accepted direction: YAML journeys, Go 1.26.x runtime components, extensible resources/controllers, optional project-owned AI/RAG/CLI integrations, and recoverability with auditable execution. iot.EraX is its creator and an initial consumer, not a mandatory identity or knowledge service. **These are design goals; the current executable code is a GCP-shaped Node.js simulation scaffold.**
 
 The customer-facing website, authentication experience, and operational console live in `storm-harbor-app`. Runtime libraries follow `storm-lib-*`; independently deployable runtime services follow `storm-*`.
 
@@ -46,7 +48,7 @@ This separation avoids the paradox of hosting the recovery brain inside the clus
 - GitHub App onboarding with explicitly authorized repositories;
 - inventory of services, owners, environments, assets, and dependencies;
 - mapping of criticality, RTO, RPO, recovery tier, and plan per service;
-- GCP-first discovery through APIs and Cloud Asset Inventory;
+- provider-specific discovery through versioned cloud adapters;
 - read-only Terraform drift detection and remote backend correlation;
 - GitOps integration to restore FluxCD and workloads at an immutable revision;
 - CRDs for Kubernetes plans, targets, and runs;
@@ -54,7 +56,9 @@ This separation avoids the paradox of hosting the recovery brain inside the clus
 - isolated simulations with guardrails, health gates, and mandatory cleanup;
 - structured evidence for each phase and a recovery-readiness score;
 - adapter architecture ready for AWS, Azure, and other GitOps engines;
-- configurable AI providers for Codex Cloud and Gemini, with tiers, reasoning levels, task types, redaction, and human review.
+- optional project-owned AI, RAG or bounded CLI integrations, with private knowledge, redaction and human review.
+
+The capability list describes the target product. No production cloud adapter, Go runtime or installable CRD is delivered by the current scaffold. [Resource extensibility](docs/architecture/extensibility.md) and the [roadmap](docs/roadmap.md) define the remaining deliveries.
 
 ## Recovery flow
 
@@ -133,13 +137,15 @@ Open `http://127.0.0.1:8000`. The sidebar has collapsible sections and a persist
 
 ## Next milestones
 
-1. GitHub App, onboarding, and installation policy.
-2. Inventory API and PostgreSQL dependency graph.
-3. Discovery adapters for GitHub, Terraform, GCP, and Kubernetes.
-4. `DisasterRecoveryPlan`, `RecoveryTarget`, and `RecoveryRun` CRDs.
-5. Kubernetes Operator and external orchestrator with durable queues.
-6. Simulations in a disposable project and an immutable evidence store.
-7. Real recovery with approval, break-glass access, and auditing.
+1. Publish the website, English technical documentation and community foundations.
+2. Version the provider-neutral YAML/resource contracts and Go 1.26.x SDK/CLI.
+3. Deliver tenant-isolated onboarding, inventory and private-source discovery.
+4. Introduce cloud and optional AI/RAG/CLI adapters with explicit capability matrices.
+5. Implement extensible resources/controllers, native Kubernetes CRDs and a Go Operator.
+6. Prove isolated recovery, cleanup and evidence, including supported multicloud mappings.
+7. Enable approved real recovery only after the published readiness gates pass.
+
+See [sponsorship](docs/community/sponsorship.md) and [CNCF readiness](docs/community/cncf-readiness.md) for sustainability and community preparation. Storm Harbor has no CNCF affiliation at this stage.
 
 ## Contributing
 

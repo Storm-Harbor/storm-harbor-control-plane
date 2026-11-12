@@ -1,5 +1,5 @@
 site_name: Storm Harbor Control Plane
-site_description: Continuous recovery readiness for Terraform, Google Cloud, Kubernetes and GitOps
+site_description: Declarative multicloud recovery, private projects, Go controllers and auditable evidence
 site_url: https://storm-harbor.github.io/storm-harbor-control-plane/
 repo_url: https://github.com/Storm-Harbor/storm-harbor-control-plane
 repo_name: Storm-Harbor/storm-harbor-control-plane
@@ -54,6 +54,9 @@ nav:
       - Product: product/overview.md
       - Glossary: product/glossary.md
   - Architecture:
+      - Platform contract: architecture/platform-contract.md
+      - Engineering standards: architecture/engineering-standards.md
+      - Resource extensibility: architecture/extensibility.md
       - Product and repository boundaries: architecture/repository-boundaries.md
       - Control plane: architecture/control-plane.md
       - Federated Source of Truth: architecture/federated-source-of-truth.md
@@ -69,6 +72,9 @@ nav:
   - Evolution:
       - Roadmap: roadmap.md
       - About the project: about.md
+  - Community:
+      - Sponsorship: community/sponsorship.md
+      - CNCF readiness: community/cncf-readiness.md
 
 markdown_extensions:
   - abbr

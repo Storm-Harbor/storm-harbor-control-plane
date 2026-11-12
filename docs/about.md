@@ -4,7 +4,7 @@
 
 Recommended description for the **About** field:
 
-> Technical documentation and safe simulations for the open-source Storm Harbor recovery control plane by iot.EraX.
+> English documentation and safe simulations for a Go, YAML-driven, cloud-independent recovery control plane.
 
 Recommended website:
 
@@ -19,8 +19,14 @@ business-continuity
 control-plane
 recovery-readiness
 terraform
+multicloud
+golang
+custom-resources
+aws
+azure
+digitalocean
+oracle-cloud
 google-cloud
-gke
 kubernetes-operator
 kubernetes-crd
 gitops
@@ -35,3 +41,7 @@ The topics represent the problem, architecture, integrations, and measurable out
 ## Short message
 
 **Storm Harbor Control Plane — Discover dependencies. Prove recoverability. Orchestrate recovery.**
+
+## Independence
+
+Storm Harbor is created by iot.EraX and designed for any organization, including private projects and project-owned knowledge. iot.EraX services are optional integrations. The accepted runtime language is Go 1.26.x. See [sponsorship](community/sponsorship.md) and [CNCF readiness](community/cncf-readiness.md); the project is not currently affiliated with CNCF.

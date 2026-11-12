@@ -5,7 +5,11 @@ import test from 'node:test';
 const workflowsDirectory = new URL('../../.github/workflows/', import.meta.url);
 
 async function loadWorkflows() {
-  const names = (await readdir(workflowsDirectory)).filter((name) => name.endsWith('.yml')).sort();
+  // Publishing documentation is separate from the manually dispatched DR workflows.
+  // Ignore filesystem metadata; every other workflow retains the simulation gates.
+  const names = (await readdir(workflowsDirectory))
+    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && name !== 'documentation.yml')
+    .sort();
   return Promise.all(
     names.map(async (name) => ({ name, content: await readFile(new URL(name, workflowsDirectory), 'utf8') })),
   );
