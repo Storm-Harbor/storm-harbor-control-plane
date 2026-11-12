@@ -55,6 +55,7 @@ nav:
       - Glossary: product/glossary.md
   - Architecture:
       - Platform contract: architecture/platform-contract.md
+      - Engineering standards: architecture/engineering-standards.md
       - Resource extensibility: architecture/extensibility.md
       - Product and repository boundaries: architecture/repository-boundaries.md
       - Control plane: architecture/control-plane.md
