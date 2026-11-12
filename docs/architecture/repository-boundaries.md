@@ -10,6 +10,7 @@ The [platform contract](platform-contract.md) is the accepted target. New execut
 | --- | --- | --- |
 | `storm-harbor-app` | public product website, login journey, MFA challenge UI, and the authenticated operational console | credentials, MFA secrets, recovery domain execution, or authoritative inventory |
 | `storm-harbor-control-plane` | this technical documentation site, architecture, schemas, safe simulations, and executable contract checks | the customer console or a production runtime API |
+| `storm-lib-recovery-contracts` | initial Go producer candidate: scoped provider-neutral configuration, strict YAML/schema validation and safe typed errors | authentication, GitHub App hosting, cloud/vault calls, execution or native CRD installation |
 | `api-auth` | optional iot.EraX identity integration currently used by the legacy BFF | a mandatory identity provider for all Storm Harbor adopters; product authorization or recovery execution |
 | `hub-ai` / Maya and project-owned AI/RAG/CLI | optional, scoped intelligence behind a versioned adapter; hub-ai is still under development | mandatory AI, replicated customer knowledge, unrestricted cloud access or deterministic recovery authority |
 

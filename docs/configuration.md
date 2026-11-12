@@ -1,8 +1,10 @@
 # Configuration plan
 
+Start with [Getting Started](getting-started/index.md) and the [provider-neutral YAML guide](getting-started/yaml.md). The new `recovery.stormharbor.io/v1alpha1` producer candidate has its own strict schema and scope/lifecycle checks. This page preserves the legacy simulation design and broader planned configuration layers; its AI, environment-variable and IAM snapshot sections are not fields or runtime features of that initial Go contract.
+
 ## Decision
 
-Use a versioned YAML document as the primary contract, validated by JSON Schema. Environment variables serve only to bootstrap the process and provide emergency overrides for a run; secret values belong in a secret manager.
+Use a versioned YAML document as the primary contract, validated by JSON Schema. Environment variables serve only to bootstrap the process and provide explicitly authorized, bounded overrides for a run; they cannot bypass policy or approval. Secret values belong in a secret manager.
 
 An environment-variable-only configuration looks simple, but becomes difficult to validate and audit across multiple repositories, projects, phases, and feature toggles. YAML keeps relationships explicit; JSON Schema provides validation and allows invalid plans to be rejected before execution.
 
@@ -67,7 +69,7 @@ An IAM snapshot should contain normalized declarative data and recovery metadata
 - schema version, source commit, creation time and recovery dependency order;
 - SHA-256 digest and KMS key version used for envelope encryption.
 
-The vault path in configuration is a reference, not a secret. Snapshot reads should be limited to the recovery workload identity. Snapshot writes should use a separate backup identity where practical, preventing a compromised recovery process from silently replacing trusted backups.
+In the legacy design, a vault path is a reference rather than a secret value, but it can still be sensitive metadata. The new provider-neutral resource accepts only a scoped logical secret alias; actual paths and sensitive bindings stay in customer-controlled external systems. Snapshot reads should be limited to the recovery workload identity. Snapshot writes should use a separate backup identity where practical, preventing a compromised recovery process from silently replacing trusted backups. See [external secrets](architecture/external-secrets.md).
 
 ## Validation and lifecycle
 
@@ -79,6 +81,8 @@ The vault path in configuration is a reference, not a secret. Snapshot reads sho
 - Introduce scheduled execution only after cleanup, quotas, budget alerts and kill-switch behavior are tested manually.
 
 ## Guardrail evaluation order
+
+The following describes disposable legacy simulations. Retained restores never inherit blanket cleanup; see [policies and recovery journey](getting-started/policies-and-journey.md).
 
 1. Validate the configuration schema and installation policy ceiling.
 2. Check the global kill switch before requesting workload identity.

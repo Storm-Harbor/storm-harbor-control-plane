@@ -4,8 +4,8 @@ The [platform contract](architecture/platform-contract.md) defines the accepted 
 
 | Milestone | Verifiable outcome | Current state |
 | --- | --- | --- |
-| M0: public foundations | website, English docs, schema/mock checks, clear status and community policies | documentation and legacy mocks exist; publication in progress |
-| M1: Go declarative core | versioned provider-neutral resources, schema validation, Go SDK/CLI and configuration migration | planned |
+| M0: public foundations | website, English docs, schema/mock checks, clear status and community policies | website and English docs published; safe simulations available |
+| M1: Go declarative core | versioned provider-neutral resources, schema validation, Go SDK/CLI and configuration migration | initial offline configuration producer in delivery; CLI/migration/engine still planned |
 | M2: private onboarding and inventory | organization/project isolation, configurable identity, authorized private sources and dependency graph | planned |
 | M3: adapters and AI integration | capability/version registry; independent cloud adapters and optional project-owned AI/RAG/CLI | planned |
 | M4: extensions and Kubernetes | custom kinds/Go controllers, admission/versioning, native CRDs and Operator | planned |
@@ -14,6 +14,12 @@ The [platform contract](architecture/platform-contract.md) defines the accepted 
 | M7: validated multicloud mappings | supported source/target combinations across AWS, Azure, DigitalOcean, OCI and GCP | planned |
 
 Cloud independence and multicloud topology belong in M1 contracts. M7 proves concrete cross-cloud combinations; earlier adapters must not require a GCP-shaped core. Managed-service portability is explicit and tested rather than inferred from provider names.
+
+## Follow current construction
+
+[Getting Started](getting-started/index.md) is the adoption entry point. [Journey #3](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/3) and [Epic #4](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/4) track the first slice: accepted App/runners/vault/target architecture, adoption documentation and the [Go producer #1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/issues/1). GitHub owns live issue/PR status. This slice does not install the App, execute workflows against cloud resources or perform real recovery.
+
+Next bounded deliveries are the producer's manual merge and immutable release, then an independently owned Go CLI/Actions consumer, GitHub App authentication/onboarding and a GCP adapter with safe sandbox acceptance. Infrastructure bootstrap, vault identity and retained restore/cutover remain separately authorized phases. Documentation and examples evolve with each delivered contract.
 
 ## Migration work
 

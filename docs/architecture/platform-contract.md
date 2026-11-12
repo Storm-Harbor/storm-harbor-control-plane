@@ -2,6 +2,8 @@
 
 This is the accepted product direction. The repository currently contains documentation, a GCP-specific configuration example and safe Node.js simulations. It does not yet implement the Go runtime, multicloud adapters, extension registry or Kubernetes CRDs described here.
 
+The first provider-neutral Go configuration producer is being delivered in [storm-lib-recovery-contracts #1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/issues/1). It validates intent offline; App/executor integration and recovery remain planned. Follow [Getting Started](../getting-started/index.md), [GitHub execution](github-execution.md), [external secrets](external-secrets.md) and the [accepted decisions](accepted-decisions.md) for this initial slice.
+
 ## Independent organizations and private projects
 
 Storm Harbor is a reusable, organization-independent recovery control plane. iot.EraX is its creator and an initial consumer, not a required identity provider, cloud account, source repository or knowledge service.

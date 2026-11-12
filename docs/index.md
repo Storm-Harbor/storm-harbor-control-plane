@@ -14,7 +14,7 @@ hide:
     <p class="home-hero__lead">Know what will recover before an incident.</p>
     <p class="home-hero__summary">A cloud-independent recovery control plane for private projects: versioned YAML journeys, Go controllers, optional project-owned AI and auditable recovery. Current code provides safe simulations; production adapters are still planned.</p>
     <div class="home-hero__actions">
-      <a href="architecture/control-plane/" class="md-button md-button--primary">See how it works</a>
+      <a href="getting-started/" class="md-button md-button--primary">Get started</a>
       <a href="operations/pipelines/" class="md-button">Explore safe simulations</a>
     </div>
     <p class="home-hero__integrations">GitHub <span aria-hidden="true">·</span> Terraform <span aria-hidden="true">·</span> AWS · Azure · DigitalOcean · Oracle Cloud · GCP <span aria-hidden="true">·</span> Kubernetes</p>
@@ -89,6 +89,7 @@ flowchart LR
 
 | If you want to… | Start here |
 | --- | --- |
+| follow the build and prepare private recovery YAML | [Getting Started](getting-started/index.md) |
 | understand the product and its boundaries | [Product overview](product/overview.md) |
 | understand repository and runtime ownership | [Product and repository boundaries](architecture/repository-boundaries.md) |
 | see why ownership stays distributed | [Federated Source of Truth](architecture/federated-source-of-truth.md) |
