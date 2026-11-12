@@ -2,7 +2,7 @@
 
 ## Purpose and current status
 
-AI is optional and advisory. Every project can bring its own AI service, private retrieval API or bounded CLI through a versioned adapter. No AI provider, model family, knowledge service or iot.EraX account is mandatory. The Go integration runtime and plugin registry are planned; current Node scripts only simulate provider selection and make no external calls.
+AI is optional and advisory. Every project can bring its own AI service, private retrieval API or bounded CLI through a versioned adapter. No AI provider, model family, knowledge service or corporate account is mandatory. The Go integration runtime and plugin registry are planned; current Node scripts only simulate provider selection and make no external calls.
 
 The old Codex/Gemini profile identifiers and model strings in mock fixtures are test data, not verified current model recommendations or evidence of supported provider APIs. Production registries must validate the chosen provider's current capabilities and freeze exact adapter/model versions before activation.
 
@@ -30,7 +30,7 @@ Evidence records redacted decisions, selected references, adapter/model version 
 
 ## hub-ai and identity
 
-`hub-ai`/Maya is an optional integration still under development. iot.EraX can use it under the same contract as any other project's service. Connect to its authenticated, scoped API; do not directly read its databases, vector stores or repository files. `api-auth` is likewise an optional identity integration, not the universal Storm Harbor identity service.
+`hub-ai`/Maya is an optional integration still under development. It uses the same contract as any other project-owned service. Connect to its authenticated, scoped API; do not directly read its databases, vector stores or repository files. `api-auth` is likewise an optional identity integration, not the universal Storm Harbor identity service.
 
 ## Execution authority and failure
 

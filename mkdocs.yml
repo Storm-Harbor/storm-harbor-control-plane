@@ -119,18 +119,15 @@ plugins:
       minify_html: true
 
 extra_css:
-  - stylesheets/extra.css
+  - stylesheets/extra.css?v=2
 
 extra_javascript:
   - https://cdn.jsdelivr.net/npm/@joint/core@4.3.0/dist/joint.js
   - javascripts/joint-diagrams.js
-  - javascripts/navigation-toggle.js
+  - javascripts/navigation-toggle.js?v=2
 
 extra:
   generator: false
-  brand_by:
-    label: by iot.EraX
-    url: https://ioterax.com
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/Storm-Harbor/storm-harbor-control-plane
@@ -138,4 +135,4 @@ extra:
   status:
     simulation: Safe simulation
 
-copyright: Storm Harbor Control Plane documentation · by <a href="https://ioterax.com" target="_blank" rel="noreferrer">iot.EraX</a>
+copyright: Storm Harbor Control Plane documentation

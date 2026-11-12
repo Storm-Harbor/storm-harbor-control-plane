@@ -30,6 +30,11 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install -r requirements-docs.txt
       - run: python -m mkdocs build --strict
+      - name: Validate documentation navigation in Chromium
+        run: |
+          npm ci --ignore-scripts
+          npx playwright install --with-deps chromium
+          npm run test:docs-browser
       - name: Exclude filesystem metadata from publication
         run: find site -type f -name '._*' -delete
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
