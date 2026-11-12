@@ -12,6 +12,7 @@ The product owner accepted these decisions during the November 2026 design conve
 | GCP first target design; provider-independent core | Validate an initial concrete path while preserving AWS, Azure, DigitalOcean and OCI adapter boundaries |
 | Respect infrastructure and application owners | Terraform/HCP governs its resources/state/apply approvals; application workflows govern immutable releases and traffic |
 | English adoption docs alongside implementation | Getting Started and YAML examples expose the exact current boundary; GitHub holds live delivery status |
+| Optional dashboard for each recovery repository | Publish historical exercise/restore summaries, gap checklists and diagrams using the Storm Harbor identity; independently verify the site's audience and retain authoritative evidence outside GitHub |
 
 The approved reference assessment uses neighboring infrastructure, application, AI, IoT and Go-service patterns as design inputs only. Private project IDs, workspace bindings, account details and operational state are not public examples or product dependencies. The explicitly excluded workspace is outside this delivery.
 

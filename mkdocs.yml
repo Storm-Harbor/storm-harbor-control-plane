@@ -77,6 +77,7 @@ nav:
   - Operations:
       - Simulation pipelines: operations/pipelines.md
       - RTO, RPO, and evidence: operations/evidence.md
+      - Recovery repository dashboard: getting-started/recovery-dashboard.md
       - Configuration: configuration.md
   - Evolution:
       - Roadmap: roadmap.md

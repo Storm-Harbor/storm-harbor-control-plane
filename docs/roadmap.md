@@ -23,6 +23,8 @@ Cloud independence and multicloud topology belong in M1 contracts. M7 proves con
 
 The initial producer has passed manual merge, main validation and immutable publication. Next are an independently owned offline Go CLI, the customer-owned private recovery repository, GitHub App authentication/onboarding, runner/vault integration and a GCP adapter with safe sandbox acceptance. Optional repository analysis can propose manifest PRs after the read-only identity and data-policy gates. Infrastructure bootstrap and retained restore/cutover remain separately authorized phases. Documentation and examples evolve with each delivered contract.
 
+Each private recovery repository may also publish an optional [dashboard](getting-started/recovery-dashboard.md) with run history, gap-analysis checklists, phase outcomes and dependency/journey diagrams. Stage 08A follows the scoped reporting/evidence contracts and verifies actual website privacy; it does not wait for the full operational console. Authoritative historical evidence remains outside the failure domain.
+
 ## Migration work
 
 - Preserve existing Node simulation fixtures until Go equivalents demonstrate behavior and guardrail parity.

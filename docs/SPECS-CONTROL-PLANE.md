@@ -16,6 +16,7 @@ An organization describes recovery intent in its own private repository. Storm H
 - AWS, Azure, DigitalOcean, Oracle Cloud Infrastructure and GCP are adapter targets. Cross-cloud recovery requires tested source-to-target compatibility.
 - Go **1.26.x** is the runtime baseline for SDKs, CLIs, applications, APIs, agents and controllers. Browser assets/build tools and the existing transitional simulations have their documented boundaries.
 - Recovery is a versioned YAML journey. User-defined resource kinds and controllers are part of the target design; native Kubernetes CRDs belong to the Kubernetes adapter.
+- Each private recovery repository may have its own optional dashboard: run history, gap-analysis checklists, phase outcomes and dependency/journey diagrams using the Storm Harbor visual identity. Publication is a scoped projection of evidence, with independently verified audience and hosting controls.
 - AI/RAG/CLI integrations are optional, project-owned and advisory. They cannot authorize an operation, change the approved plan or gain access to another project's knowledge.
 - Technical documentation is English. The public website maintains all configured locales, currently 25 language/regional options.
 
@@ -39,6 +40,7 @@ Stages identify acceptance boundaries, not calendar promises. Independent work c
 | 06 | External bindings and secret resolution | 04, 05 | Planned |
 | 07 | Read-only inventory, dependencies and readiness | 04–06 for protected sources | Planned |
 | 08 | Policy, immutable planning and durable orchestration | 02, 04–07 | Planned |
+| 08A | Optional repository recovery dashboard and historical reports | 03, 07–08; approved projection and publication audience | Planned; independent of the operational console |
 | 09 | GCP target creation/reuse and infrastructure-owner integration | 05, 06, 08 | Design documented; adapter planned |
 | 10 | Isolated end-to-end recovery exercise | 03–09 and independent evidence path | Planned |
 | 11 | Authorized retained restore, cutover and emergency execution | 10 and approved incident controls | Planned |
@@ -50,6 +52,8 @@ Stages identify acceptance boundaries, not calendar promises. Independent work c
 | 17 | Community, funding and CNCF readiness | Independent of recovery execution | Foundations delivered; activation/submission separate |
 
 The first usable execution milestone is a **bounded, isolated GCP exercise through a private adopter repository**. It does not require waiting for a console, AI integration or every cloud adapter. A retained real restore has additional gates and must not be inferred from a successful exercise.
+
+Stage ranges refer to the numbered core stages. Letter-suffixed Stages 04A and 08A are optional branches and do not become prerequisites for recovery merely because they appear between core stages.
 
 Stage 04A is an optional early use of a bounded AI adapter for read-only repository analysis and reviewed manifest proposals. It does not wait for the full recovery engine and does not enable mutations. Stage 14 extends the model to broader private retrieval/operational assistance after deterministic tool and orchestration contracts exist.
 
@@ -141,6 +145,7 @@ Published module checksum: `h1:wVFOP9bwkppvtz6VfAXn1dMaOZMT59NsKLH5xNq8O4A=`. Pu
 - [ ] Define logical source/provider/placement/secret aliases and customer-controlled external bindings; exclude secrets, state files, backups and private knowledge from Git.
 - [ ] Record environment/region targets and separate exercise/restore declarations; installation and cloud-execution capabilities remain disabled until later gates pass.
 - [ ] Agree external evidence storage, emergency-access ownership and lifecycle/retention policy.
+- [ ] Choose whether to enable a repository dashboard and define its audience, hosting, disclosure policy and retention. Private repository visibility does not establish private website access.
 
 **Exit:** private declarations pass the offline workflow; repository access and ownership are verified. This stage precedes live exercises and does not itself authorize App installation privileges, HCP applies or cloud provisioning.
 
@@ -270,6 +275,24 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 
 **Exit:** deterministic synthetic/provider-sandbox runs can plan, pause, resume, cancel and retain evidence without bypassing scope or repeating unsafe mutations. AI is not required for any approved run.
 
+### Stage 08A — Repository dashboard and historical reports
+
+**Outcome:** each adopter recovery repository can publish a central, read-only dashboard of its authorized history, without requiring the full operational console. See the [dashboard adoption and publication guide](getting-started/recovery-dashboard.md).
+
+- [ ] Publish a versioned, scoped report projection and reporting/publication policy before implementing its Go generator, template or reusable workflow. The initial alpha accepts no dashboard configuration fields.
+- [ ] Provide overview, chronological run history, per-run phase timeline, gap-analysis checklist and dependency/journey diagrams. Clearly separate exercise from retained restore, planned topology from observations, and measured objectives from unknown values.
+- [ ] Preserve accepted snapshots for every recorded run, including failed, aborted, partial and inconclusive outcomes. Version subsequent corrections and identify missing evidence instead of removing failed attempts or reporting success.
+- [ ] Link gaps to source/evidence, severity, owner, remediation and verification. A closed checklist item requires evidence; neither AI output nor a dashboard checkbox authorizes execution.
+- [ ] Generate diagrams from scoped versioned inputs, with escaped labels, safe links and accessible text/table alternatives. Apply Storm Harbor colors/layout patterns without copying private console code, telemetry or customer data.
+- [ ] Export only audience-approved summary fields. Keep raw evidence, logs, state, credentials, private knowledge and signed access URLs out of the static artifact, search index, downloadable JSON and diagram source.
+- [ ] Verify the site's actual access controls, organization entitlement and complete audience before publication. GitHub Pages private publishing requires Enterprise Cloud; otherwise use approved private hosting or a protected local report. Public publishing is an explicit synthetic/disclosure-approved option, never an automatic fallback.
+- [ ] Preserve authoritative external evidence with integrity and retention outside the modeled failure domain. Rebuild the dashboard from that evidence; Pages and Actions artifacts are not the only historical record.
+- [ ] Use a pinned credential-free rendering step over a reviewed export, separate evidence-reader and publisher permissions, immutable assets and serialized publication that cannot lose concurrent runs. Deny untrusted PR deployment and prevent remote diagram scripts or repository content from widening tools/egress.
+- [ ] Display snapshot time, freshness, provenance and publication health. Failed evidence export or website deployment does not change the recovery result; a stale dashboard never claims live readiness.
+- [ ] Test scope/audience denial, full-artifact secret canaries, injected diagram content, history retention, concurrency, missing evidence, failed publication, mobile/keyboard access and a successful rebuild from external evidence.
+
+**Exit:** an authorized viewer can follow a synthetic run and its gaps from the repository overview to its historical summary and diagram, while unauthorized viewers cannot retrieve any private artifact. Stage 03 can prepare a scaffold; historical execution reporting waits for the authoritative Stage 07–08 contracts. The dashboard is optional and cannot approve, start or resume recovery.
+
 ### Stage 09 — GCP target foundation
 
 **Outcome:** an approved plan creates a new isolated GCP target or verifies an existing one through the correct infrastructure owner.
@@ -300,6 +323,7 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 - [ ] Reauthorize cleanup and verify real run ownership; preserve existing sandboxes, shared assets and any resource not independently proven run-owned.
 - [ ] Exercise cancellation, expiry, denied/failed cleanup, partial restore, provider/network failure and orphan detection. Provide a separate authorized janitor path.
 - [ ] Retain sanitized signed/integrity-checked evidence outside the failure domain, including failures and cleanup outcomes.
+- [ ] When the repository dashboard is enabled, publish the approved exercise summary, gaps, measured outcomes and diagram; record publication failure separately from recovery/cleanup outcomes.
 - [ ] Complete at least three consecutive isolated exercises meeting their declared objectives before leaving mock mode for that supported scenario.
 
 **Exit:** functional recovery objectives and cleanup are measured, not inferred from a green workflow. An exercise never redirects production traffic automatically.
@@ -316,6 +340,7 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 - [ ] Deliver a verified local/self-hosted emergency executor with independent time-bounded identity, current policy checks and durable audit; unavailability is not a permission bypass.
 - [ ] Model regional, account/project, identity and provider-wide outages explicitly. Another project/region does not by itself solve a provider-wide failure.
 - [ ] Test revocation, stale plans, inaccessible KMS/vault, unavailable source APIs, interrupted cutover and external-operation reconciliation in approved exercises.
+- [ ] When reporting is enabled, retain the approved restore/cutover summary and phase history under the repository's disclosure policy, without exposing incident-sensitive details.
 
 **Exit:** authorized retained recovery and cutover have scenario-specific evidence and runbooks. No real incident automation is inferred from Stage 10 alone.
 
@@ -434,6 +459,7 @@ Before enabling an operation, its owning issue must prove the applicable items b
 | Recovery | Backup integrity/decryptability; application revision and dependency health; business validation; measured RTO/RPO; cutover/rollback gates |
 | Resilience | GitHub/source/primary control-plane/region/provider unavailable; independent identity, backups and evidence; no permission bypass |
 | AI/extensions | Cross-project retrieval denial; prompt injection; bounded CLI/tool schema; no private fallback egress; operation with AI disabled; controller conversion/crash |
+| Repository dashboard | Actual host access control; no private artifacts via direct URLs/search/JSON/diagrams; all terminal run outcomes; scoped gap evidence; concurrent updates; stale/failed publication; rebuild from independent evidence |
 | Console/operations | Real authorized API outcomes, accessibility/RTL, safe exports/evidence, protected metrics, graceful shutdown, upgrade/rollback and supported-platform evidence |
 
 ## 7. Delivery and progress rules
