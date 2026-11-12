@@ -107,6 +107,8 @@ node scripts/simulate-recovery.mjs
 
 ## Customer documentation
 
+Follow the [complete control-plane plan and stage checklists](docs/SPECS-CONTROL-PLANE.md) for delivered foundations, prerequisites, acceptance gates and the path from offline validation to private-adopter exercises and retained recovery.
+
 The MkDocs portal contains an executive overview, diagrams, architecture, the federated model, inventory, ITSCM, security, CRDs/Operator, pipelines, and roadmap.
 
 ```bash

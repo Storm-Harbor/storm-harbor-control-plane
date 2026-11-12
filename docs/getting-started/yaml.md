@@ -1,6 +1,6 @@
 # YAML structure and examples
 
-The initial provider-neutral contract is `recovery.stormharbor.io/v1alpha1`, kind `RecoveryConfiguration`. Its owner is [storm-lib-recovery-contracts](https://github.com/Storm-Harbor/storm-lib-recovery-contracts). The initial implementation is tracked in [issue #1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/issues/1); use an immutable module release only after its manual merge and publication.
+The initial provider-neutral contract is `recovery.stormharbor.io/v1alpha1`, kind `RecoveryConfiguration`. Its owner is [storm-lib-recovery-contracts](https://github.com/Storm-Harbor/storm-lib-recovery-contracts). Immutable [v0.1.0-alpha.1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/releases/tag/v0.1.0-alpha.1) is published and its public Go checksums are verified. Implementation and release evidence are recorded in [issue #1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/issues/1).
 
 This contract validates intent offline. It does not execute the journey, resolve aliases, fetch secrets or provision a project. The legacy `dr.config.example.yaml` in this documentation repository remains a separate, GCP-shaped **simulation** contract. Neither document becomes a Kubernetes object merely by using `apiVersion` and `kind`.
 
@@ -77,11 +77,11 @@ This excerpt is not a complete configuration. Restore can also request `create`;
 
 ## Validation boundaries
 
-The candidate Go producer's `DecodeYAML(document, trustedScope)` accepts exactly one document up to 64 KiB, with depth limited to 32. It rejects unknown or duplicate fields, case-mismatched field names, anchors/aliases, custom tags, multiple documents and invalid scalar types. Use strings for identifiers and integer seconds for expiry. Errors return stable codes/localization keys and safe field names, never the supplied YAML values.
+The alpha Go producer's `DecodeYAML(document, trustedScope)` accepts exactly one document up to 64 KiB, with depth limited to 32. It rejects unknown or duplicate fields, case-mismatched field names, anchors/aliases, custom tags, multiple documents and invalid scalar types. Use strings for identifiers and integer seconds for expiry. Errors return stable codes/localization keys and safe field names, never the supplied YAML values.
 
 The caller must establish `trustedScope` from authenticated identity, authoritative membership and policy. Copying scope from the same YAML into that argument defeats the boundary. Schema validation checks shape; Go validation additionally checks scope equality, duplicate secret aliases and equal source/target aliases. Neither detects different aliases resolving to the same actual cloud resource: runtime adapters must verify that before mutation.
 
-The canonical JSON Schema is versioned in the producer's `schemas/recovery-configuration.schema.json`. Its `$id` is a logical identifier, not a deployed schema download endpoint. Pin the file and Go module to the same immutable release. Candidate files are available on the issue's linked PR until release; no executable CLI command is published yet.
+The canonical JSON Schema is versioned in the producer's `schemas/recovery-configuration.schema.json`. Its `$id` is a logical identifier, not a deployed schema download endpoint. Pin the file and Go module to the same immutable release, currently `v0.1.0-alpha.1`. No executable recovery CLI command is published yet; the [stage checklist](../SPECS-CONTROL-PLANE.md) describes its delivery boundary.
 
 ## Keep planned resources separate
 

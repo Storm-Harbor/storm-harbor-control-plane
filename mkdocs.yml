@@ -58,6 +58,7 @@ nav:
       - YAML structure: getting-started/yaml.md
       - Policies and journey: getting-started/policies-and-journey.md
       - GCP targets: getting-started/gcp-targets.md
+  - Plan and checklists: SPECS-CONTROL-PLANE.md
   - Architecture:
       - Platform contract: architecture/platform-contract.md
       - Engineering standards: architecture/engineering-standards.md

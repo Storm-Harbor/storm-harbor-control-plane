@@ -20,6 +20,12 @@ Each project chooses endpoint/transport, adapter version, identity reference, pe
 
 Model selection, reasoning settings and task responsibility are separate concerns. Adapter capabilities are validated rather than forcing a universal reasoning enum onto every provider. Untrusted results cannot change authorization, controller code, approved targets or execution plans.
 
+## Assisted repository onboarding
+
+The planned initial use is a scoped, opt-in analysis of selected repository revisions to propose recovery YAML in a PR. The bot identifies infrastructure/application dependencies and reports missing objectives, backup information and target choices. It does not invent missing facts, execute recovery or retrieve secrets. Operators manually register vault bindings without putting credential values in Git or model context.
+
+The preferred deep-analysis preset is an approved OpenAI GPT model with `xhigh` where the selected model/integration supports it; Copilot is an optional adapter with separate entitlement, model/tool discovery and organization-policy gates. The actual model must be pinned and evaluated, and unsupported settings cannot trigger a silent fallback. The [master plan's Stage 04A](../SPECS-CONTROL-PLANE.md#stage-04a-optional-assisted-analysis-and-manifest-drafting) owns the complete checklist, source references and read/proposal/execute separation. This early onboarding branch does not make the full AI/RAG runtime or autonomous recovery available.
+
 ## Private knowledge boundary
 
 The project retains its knowledge base. Retrieval can execute inside its environment and return only expressly authorized minimal results. Registration does not upload a corpus, create shared memory or allow another project's queries. Caches and tool state are scoped to organization/project and governed by retention.

@@ -2,13 +2,15 @@
 
 Start here to follow Storm Harbor while it is being built. The intended experience is a private configuration repository, an organization-installed GitHub App and versioned Go executors running in GitHub Actions or customer-owned runners. The configuration describes intent; independent identity, policy and provider checks authorize each operation.
 
+Use the [complete plan and checklists](../SPECS-CONTROL-PLANE.md) to follow every implementation/adoption stage, its dependencies and its acceptance gates.
+
 ## What you can use today
 
 | Capability | Availability |
 | --- | --- |
 | Public website and English documentation | Published |
 | Credential-free GCP-shaped simulations | Available in this repository; see [simulation pipelines](../operations/pipelines.md) |
-| Provider-neutral Go configuration validation | Initial producer candidate in [storm-lib-recovery-contracts #1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/issues/1); requires manual merge and immutable release before consumer adoption |
+| Provider-neutral Go configuration validation | Immutable [v0.1.0-alpha.1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/releases/tag/v0.1.0-alpha.1), verified through the public Go proxy/checksum database; offline library only |
 | GitHub App installation, executor/CLI, vault resolution, project provisioning and real recovery | Planned; no installation link or production recovery command is available yet |
 | Continuous controller, custom resource registry, Kubernetes CRDs and private AI adapters | Planned |
 
