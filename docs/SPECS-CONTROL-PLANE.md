@@ -64,6 +64,7 @@ Stage 04A is an optional early use of a bounded AI adapter for read-only reposit
 | `storm-harbor-control-plane` | Primary repository for Go CLI, GitHub App/bots, orchestration, APIs, adapters, controllers/CRDs and internal packages; also technical documentation, legacy simulations and demand records |
 | `storm-lib-recovery-contracts` | Initial shared Go configuration semantics, strict YAML/schema validation and typed errors |
 | `storm-harbor-app` | Static multilingual product website and transitional application scaffold |
+| `harbor-lens` | Separate operational frontend and synthetic sandbox; future scoped core API consumer |
 | `.github` | Public profile, engineering guidance, contribution/security policies and delivery practices |
 | Customer-owned private repository | Recovery declarations, reviewed policies/runbooks and authorized source references; never shared customer knowledge or secret values |
 
@@ -399,7 +400,7 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 
 **Outcome:** a user can manage authorized recovery through an API/console using the same contracts as CLI/workflows.
 
-The Go APIs belong to the primary control-plane repository. The future monitoring-center user interface is a separate application consuming those APIs; it does not relocate the existing product website from `storm-harbor-app`.
+The Go APIs belong to the primary control-plane repository. The separate monitoring-center application is **Harbor Lens**, in `harbor-lens`; the website stays in `storm-harbor-app`. See the [Harbor Lens plan](SPECS-HARBOR-LENS.md) for sandbox, private observation, Harbor groups and approved operation. The first synthetic frontend may proceed without an unpublished API; live integration retains all producer/security gates.
 
 - [ ] Publish transport-neutral domain contracts and explicit versioned OpenAPI/safe error mappings before API consumers.
 - [ ] Implement configurable human identity and authoritative organization/project access, including revocation and protected route/resource policies.

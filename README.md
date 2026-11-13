@@ -8,7 +8,7 @@ This repository owns the **Storm Harbor technical documentation site**, architec
 
 The [platform contract](docs/architecture/platform-contract.md) defines the accepted direction: YAML journeys, Go 1.26.x runtime components, extensible resources/controllers, optional project-owned AI/RAG/CLI integrations, and recoverability with auditable execution. **These are design goals; the current executable code is a GCP-shaped Node.js simulation scaffold.**
 
-The customer-facing website, authentication experience, and operational console live in `storm-harbor-app`. Runtime libraries follow `storm-lib-*`; independently deployable runtime services follow `storm-*`.
+The product website stays in `storm-harbor-app`. Core Go implementation belongs here. **[Harbor Lens](https://github.com/Storm-Harbor/harbor-lens)** is our separate operational frontend, beginning with a synthetic sandbox. See its [plan and checklist](docs/SPECS-HARBOR-LENS.md); live connections and operations require published core contracts.
 
 The product applies a **Federated Source of Truth (FSoT)**: each system remains authoritative in its domain, while the control plane discovers, normalizes, correlates, and reconciles those sources into a unified view of readiness, RTO, RPO, plans, runs, and evidence.
 
@@ -114,7 +114,7 @@ go build -trimpath -o storm ./cmd/storm
 ./storm validate --file examples/exercise.yaml --organization org-example --project project-example --output json
 ```
 
-See the [exact CLI contract and exit codes](docs/getting-started/offline-cli.md). This is a source candidate, not a published binary release. Validation checks an explicit local expectation; it does not authenticate, authorize, resolve secrets or perform recovery. Use `make check-go` for formatting, vet, combined race/statement coverage, executable acceptance, build and module integrity. The website remains in `storm-harbor-app`; a future monitoring-center application is separate.
+See the [exact CLI contract and exit codes](docs/getting-started/offline-cli.md). This is a source candidate, not a published binary release. Validation checks an explicit local expectation; it does not authenticate, authorize, resolve secrets or perform recovery. Use `make check-go` for formatting, vet, combined race/statement coverage, executable acceptance, build and module integrity. The website remains in `storm-harbor-app`; Harbor Lens is a separate application.
 
 ## Customer documentation
 

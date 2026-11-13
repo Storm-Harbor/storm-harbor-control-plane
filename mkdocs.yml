@@ -60,6 +60,7 @@ nav:
       - Policies and journey: getting-started/policies-and-journey.md
       - GCP targets: getting-started/gcp-targets.md
   - Plan and checklists: SPECS-CONTROL-PLANE.md
+  - Harbor Lens plan: SPECS-HARBOR-LENS.md
   - Architecture:
       - Platform contract: architecture/platform-contract.md
       - Engineering standards: architecture/engineering-standards.md
