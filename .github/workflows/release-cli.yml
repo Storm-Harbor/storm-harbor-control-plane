@@ -24,7 +24,7 @@ jobs:
       contents: read
       actions: read
     steps:
-      - name: Require reviewed main, successful source checks and an unused version
+      - name: Require reviewed master, successful source checks and an unused version
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ inputs.version }}
@@ -32,16 +32,16 @@ jobs:
         run: |
           set -euo pipefail
           test "$GITHUB_REPOSITORY" = Storm-Harbor/storm-harbor-control-plane
-          test "$GITHUB_REF" = refs/heads/main
+          test "$GITHUB_REF" = refs/heads/master
           test "${#VERSION}" -le 64
           [[ "$VERSION" =~ ^v0\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-alpha\.[1-9][0-9]*$ ]]
           gh release verify --help > /dev/null
           gh release verify-asset --help > /dev/null
           gh attestation verify --help > /dev/null
           test "$(gh api "repos/$GITHUB_REPOSITORY/immutable-releases" --jq .enabled)" = true
-          gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&branch=main&per_page=100" > checks.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&branch=master&per_page=100" > checks.json
           jq -e --arg sha "$GITHUB_SHA" '
-            [.workflow_runs[] | select(.head_sha == $sha and .head_branch == "main")] as $runs |
+            [.workflow_runs[] | select(.head_sha == $sha and .head_branch == "master")] as $runs |
             [".github/workflows/go-cli.yml", ".github/workflows/documentation.yml"] |
             all(.[]; . as $path | ([$runs[] | select(.path == $path)] | sort_by(.run_number) | last) as $run |
               $run.status == "completed" and $run.conclusion == "success")
@@ -147,7 +147,7 @@ jobs:
             bundle="${bundles[$index]}"
             test -f "$asset" && test ! -L "$asset"
             test -f "$bundle" && test ! -L "$bundle"
-            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --bundle "$bundle" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release-cli.yml" --source-ref refs/heads/main --source-digest "$GITHUB_SHA" --deny-self-hosted-runners
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --bundle "$bundle" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release-cli.yml" --source-ref refs/heads/master --source-digest "$GITHUB_SHA" --deny-self-hosted-runners
           done
           sha256sum "${expected[@]}" "${bundles[@]}" > SHA256SUMS
           sha256sum --check SHA256SUMS

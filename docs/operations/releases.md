@@ -2,19 +2,19 @@
 
 The source CLI is merged and has passed native Linux, macOS and Windows acceptance. An installable binary requires a separate immutable release, checksums and verified signed build provenance. Consult the [published releases](https://github.com/Storm-Harbor/storm-harbor-control-plane/releases) for actual availability; a source merge, candidate CI artifact or this runbook is not evidence that a binary version has been published.
 
-The manual `Release CLI alpha` workflow is prepared in the owning [CLI delivery #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14). Its workflow changes require the user's manual PR merge before dispatch from `main`. No release has been activated by this documentation change.
+The manual `Release CLI alpha` workflow is prepared in the owning [CLI delivery #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14). Its workflow changes require the user's manual PR merge before dispatch from `master`. No release has been activated by this documentation change.
 
 ## Publication contract
 
 | Gate | Required behavior |
 | --- | --- |
-| Dispatch | Explicit maintainer invocation from canonical repository `main`; serialized runs; bounded alpha-version input |
-| Source | The exact commit passed successful `Go CLI` and `Documentation` push workflows on main |
+| Dispatch | Explicit maintainer invocation from canonical repository `master`; serialized runs; bounded alpha-version input |
+| Source | The exact commit passed successful `Go CLI` and `Documentation` push workflows on master |
 | Identity | Signing uses GitHub workload identity; ordinary build/PR jobs keep read-only permissions and cannot sign or publish |
 | Native platforms | Linux amd64, macOS arm64 and Windows amd64 must match the actual Go host; no unsupported cross-build is published |
 | Executable | The versioned binary passes all nine executable scenarios, including expected version and exact source revision |
 | Package | Go build tool creates deterministic tar.gz/zip packages, bounded allowlisted contents, legal notices and a digest manifest; no existing package is overwritten |
-| Provenance | Both binary and archive receive signed attestations; publisher verifies repository, signer workflow, main ref, source commit and hosted runner identity |
+| Provenance | Both binary and archive receive signed attestations; publisher verifies repository, signer workflow, master ref, source commit and hosted runner identity |
 | Publication | Verify every expected archive/bundle, generate checksums, assemble a draft, attach all seven assets and then publish one immutable prerelease |
 
 GitHub distinguishes signed build provenance from release integrity. The workflow uses [artifact attestations](https://docs.github.com/en/actions/how-tos/secure-your-work/use-artifact-attestations/use-artifact-attestations) for the build and [immutable release attestations](https://docs.github.com/en/code-security/concepts/supply-chain-security/immutable-releases) for the published tag/assets. A checksum alone does not establish either identity.
@@ -23,13 +23,13 @@ The release workflow requests signing permissions only in build jobs, and releas
 
 ## Maintainer sequence
 
-1. Manually merge the reviewed workflow/packaging PR. Wait for Go and documentation checks on the exact new `main` commit and verify its publication.
+1. Manually merge the reviewed workflow/packaging PR into `develop` and validate it. Then manually merge a separate same-repository `develop` → `master` promotion PR. Wait for Go and documentation push checks on the exact new `master` commit and verify its documentation publication.
 2. Confirm repository release immutability is enabled and choose an unused alpha tag. Existing tags/drafts/releases cause a refusal; neither tags nor assets are overwritten. After artifact verification, the publisher atomically creates the new tag at the reviewed source SHA, verifies that target before creating the draft and again after immutable publication, and never moves an existing tag.
-3. Dispatch from main, for example:
+3. Dispatch from master, for example:
 
    ```sh
    gh workflow run release-cli.yml --repo Storm-Harbor/storm-harbor-control-plane \
-     --ref main -f version=v0.1.0-alpha.1
+     --ref master -f version=v0.1.0-alpha.1
    ```
 
 4. Inspect the completed workflow, native binary acceptance, attestation verification, published immutable flag and exact release/source commit. A skipped, failed or partially completed job is not a released version.
@@ -55,7 +55,7 @@ sha256sum --ignore-missing --check SHA256SUMS
 SOURCE_REVISION="$(gh api "repos/$REPO/releases/tags/$VERSION" --jq .target_commitish)"
 gh attestation verify "$ARCHIVE" --repo "$REPO" --bundle "$BUNDLE" \
   --signer-workflow "$REPO/.github/workflows/release-cli.yml" \
-  --source-ref refs/heads/main --source-digest "$SOURCE_REVISION" \
+  --source-ref refs/heads/master --source-digest "$SOURCE_REVISION" \
   --deny-self-hosted-runners
 
 mkdir "storm-$VERSION"

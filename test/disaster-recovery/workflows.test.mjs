@@ -8,7 +8,7 @@ async function loadWorkflows() {
   // Documentation, credential-free compilation and reviewed CLI publication are separate
   // from DR simulations. Every other workflow retains the simulation gates.
   const names = (await readdir(workflowsDirectory))
-    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && !['documentation.yml', 'go-cli.yml', 'release-cli.yml'].includes(name))
+    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && !['branch-policy.yml', 'documentation.yml', 'go-cli.yml', 'release-cli.yml'].includes(name))
     .sort();
   return Promise.all(
     names.map(async (name) => ({ name, content: await readFile(new URL(name, workflowsDirectory), 'utf8') })),
@@ -33,9 +33,9 @@ test('CLI release is manual, source-qualified and separated from ordinary build 
   const content = await readFile(new URL('release-cli.yml', workflowsDirectory), 'utf8');
   assert.match(content, /^\s{2}workflow_dispatch:$/m);
   assert.doesNotMatch(content, /^\s{2}(push|pull_request|pull_request_target|schedule|workflow_run|repository_dispatch):/m);
-  assert.match(content, /test "\$GITHUB_REF" = refs\/heads\/main/);
+  assert.match(content, /test "\$GITHUB_REF" = refs\/heads\/master/);
   assert.match(content, /test "\$GITHUB_REPOSITORY" = Storm-Harbor\/storm-harbor-control-plane/);
-  assert.match(content, /head_sha=\$GITHUB_SHA&event=push&branch=main/);
+  assert.match(content, /head_sha=\$GITHUB_SHA&event=push&branch=master/);
   assert.match(content, /\$run\.status == "completed" and \$run\.conclusion == "success"/);
   assert.match(content, /group: release-cli\n\s+cancel-in-progress: false/);
   const build = content.split('\n  build:\n')[1].split('\n  publish:\n')[0];
@@ -54,7 +54,7 @@ test('CLI release is manual, source-qualified and separated from ordinary build 
 
 test('CLI publication verifies signed source before assembling and sealing a draft', async () => {
   const content = await readFile(new URL('release-cli.yml', workflowsDirectory), 'utf8');
-  for (const required of ['--signer-workflow', '--source-ref refs/heads/main', '--source-digest "$GITHUB_SHA"', '--deny-self-hosted-runners', 'sha256sum --check SHA256SUMS', '--draft --prerelease', '--draft=false --latest=false', '--jq .immutable']) assert.ok(content.includes(required), `release must enforce ${required}`);
+  for (const required of ['--signer-workflow', '--source-ref refs/heads/master', '--source-digest "$GITHUB_SHA"', '--deny-self-hosted-runners', 'sha256sum --check SHA256SUMS', '--draft --prerelease', '--draft=false --latest=false', '--jq .immutable']) assert.ok(content.includes(required), `release must enforce ${required}`);
   assert.ok(content.indexOf('gh attestation verify') < content.indexOf('gh release create'));
   assert.ok(content.indexOf('gh api --method POST') < content.indexOf('gh release create'));
   assert.match(content, /--verify-tag/);
