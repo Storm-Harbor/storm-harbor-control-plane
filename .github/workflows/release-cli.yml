@@ -1,5 +1,5 @@
-name: Release CLI alpha
-run-name: Release CLI ${{ inputs.version }}
+name: Prepare CLI alpha
+run-name: Prepare CLI ${{ inputs.version }}
 
 on:
   workflow_dispatch:
@@ -34,11 +34,14 @@ jobs:
           test "$GITHUB_REPOSITORY" = Storm-Harbor/storm-harbor-control-plane
           test "$GITHUB_REF" = refs/heads/master
           test "${#VERSION}" -le 64
-          [[ "$VERSION" =~ ^v0\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-alpha\.[1-9][0-9]*$ ]]
+          [[ "$VERSION" =~ ^v0\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-alpha\.[1-9][0-9]*$ ]] || exit 1
+          gh --version > gh-version.txt
+          read -r _ _ gh_version _ < gh-version.txt
+          [[ "$gh_version" =~ ^2\.([0-9]+)\.([0-9]+)$ ]] || exit 1
+          (( 10#${BASH_REMATCH[1]} >= 93 )) || exit 1
           gh release verify --help > /dev/null
           gh release verify-asset --help > /dev/null
           gh attestation verify --help > /dev/null
-          test "$(gh api "repos/$GITHUB_REPOSITORY/immutable-releases" --jq .enabled)" = true
           gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&branch=master&per_page=100" > checks.json
           jq -e --arg sha "$GITHUB_SHA" '
             [.workflow_runs[] | select(.head_sha == $sha and .head_branch == "master")] as $runs |
@@ -117,7 +120,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  publish:
+  draft:
     needs: [validate, build]
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -151,17 +154,14 @@ jobs:
           done
           sha256sum "${expected[@]}" "${bundles[@]}" > SHA256SUMS
           sha256sum --check SHA256SUMS
-      - name: Assemble draft, then publish one immutable prerelease
+      - name: Assemble a verified draft for maintainer publication
         shell: bash
         run: |
           set -euo pipefail
-          test "$(gh api "repos/$GITHUB_REPOSITORY/immutable-releases" --jq .enabled)" = true
           printf 'Offline validation CLI %s\n\nReviewed source: %s\nWorkflow run: %s/%s/actions/runs/%s\n\nNative Linux amd64, macOS arm64 and Windows amd64 binaries passed artifact acceptance before signing. Verify SHA256SUMS and the included Sigstore bundles with the canonical release workflow identity. Validation is offline and does not authorize or perform recovery.\n' "$VERSION" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > notes.md
           gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$VERSION" -f "sha=$GITHUB_SHA" > created-tag.json
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" --jq .object.sha)" = "$GITHUB_SHA"
           gh release create "$VERSION" incoming/* --repo "$GITHUB_REPOSITORY" --verify-tag --target "$GITHUB_SHA" --title "Storm CLI $VERSION" --draft --prerelease --latest=false --notes-file notes.md
-          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$VERSION" --jq '.assets | length')" -eq 7
-          gh release edit "$VERSION" --repo "$GITHUB_REPOSITORY" --draft=false --latest=false
-          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$VERSION" --jq .immutable)" = true
+          gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" --json assets,isDraft,isPrerelease,tagName,targetCommitish > draft.json
+          jq -e --arg version "$VERSION" --arg sha "$GITHUB_SHA" '.isDraft == true and .isPrerelease == true and .tagName == $version and .targetCommitish == $sha and (.assets | length) == 7' draft.json > /dev/null
           test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" --jq .object.sha)" = "$GITHUB_SHA"
-          gh release verify "$VERSION" --repo "$GITHUB_REPOSITORY"
