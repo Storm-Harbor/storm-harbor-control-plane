@@ -1,0 +1,167 @@
+name: Release CLI alpha
+run-name: Release CLI ${{ inputs.version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Immutable alpha version, for example v0.1.0-alpha.1
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-cli
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Require reviewed main, successful source checks and an unused version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REPOSITORY" = Storm-Harbor/storm-harbor-control-plane
+          test "$GITHUB_REF" = refs/heads/main
+          test "${#VERSION}" -le 64
+          [[ "$VERSION" =~ ^v0\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)-alpha\.[1-9][0-9]*$ ]]
+          gh release verify --help > /dev/null
+          gh release verify-asset --help > /dev/null
+          gh attestation verify --help > /dev/null
+          test "$(gh api "repos/$GITHUB_REPOSITORY/immutable-releases" --jq .enabled)" = true
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs?head_sha=$GITHUB_SHA&event=push&branch=main&per_page=100" > checks.json
+          jq -e --arg sha "$GITHUB_SHA" '
+            [.workflow_runs[] | select(.head_sha == $sha and .head_branch == "main")] as $runs |
+            [".github/workflows/go-cli.yml", ".github/workflows/documentation.yml"] |
+            all(.[]; . as $path | ([$runs[] | select(.path == $path)] | sort_by(.run_number) | last) as $run |
+              $run.status == "completed" and $run.conclusion == "success")
+          ' checks.json > /dev/null
+          gh api "repos/$GITHUB_REPOSITORY/git/matching-refs/tags/$VERSION" > tags.json
+          jq -e --arg tag "refs/tags/$VERSION" 'all(.[]; .ref != $tag)' tags.json > /dev/null
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[].tag_name' > releases.txt
+          if grep -Fxq -- "$VERSION" releases.txt; then exit 1; fi
+
+  build:
+    needs: validate
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - runner: macos-latest
+            goos: darwin
+            goarch: arm64
+          - runner: windows-latest
+            goos: windows
+            goarch: amd64
+    runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    defaults:
+      run:
+        shell: bash
+    env:
+      GOTOOLCHAIN: local
+      GOFLAGS: -mod=readonly
+      VERSION: ${{ inputs.version }}
+      TARGET_OS: ${{ matrix.goos }}
+      TARGET_ARCH: ${{ matrix.goarch }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: .go-version
+          cache: true
+      - name: Build and execute the versioned binary on its native platform
+        run: |
+          set -euo pipefail
+          test "$(go env GOOS)" = "$TARGET_OS"
+          test "$(go env GOARCH)" = "$TARGET_ARCH"
+          mkdir -p .artifacts/release
+          go build -trimpath -ldflags "-X main.version=$VERSION -X main.revision=$GITHUB_SHA" -o ".artifacts/release/storm$(go env GOEXE)" ./cmd/storm
+          STORM_TEST_BINARY=".artifacts/release/storm$(go env GOEXE)" STORM_TEST_VERSION="$VERSION" STORM_TEST_REVISION="$GITHUB_SHA" go test -count=1 ./test/acceptance
+          go version -m ".artifacts/release/storm$(go env GOEXE)" > .artifacts/release/build-info.txt
+          go run ./cmd/storm-package --version "$VERSION" --revision "$GITHUB_SHA" --os "$TARGET_OS" --arch "$TARGET_ARCH"
+      - name: Attest the native binary and distribution archive
+        id: provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4
+        with:
+          subject-path: |
+            .artifacts/release/storm*
+            .artifacts/packages/*
+      - name: Preserve the signed bundle
+        env:
+          BUNDLE_PATH: ${{ steps.provenance.outputs.bundle-path }}
+        run: cp "$BUNDLE_PATH" ".artifacts/packages/storm_${VERSION}_${TARGET_OS}_${TARGET_ARCH}.sigstore.jsonl"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: storm-release-${{ matrix.goos }}-${{ matrix.goarch }}-${{ github.sha }}
+          path: .artifacts/packages/
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+      attestations: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          pattern: storm-release-*-${{ github.sha }}
+          path: incoming
+          merge-multiple: true
+      - name: Verify signed source and checksum every expected asset
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd incoming
+          expected=("storm_${VERSION}_linux_amd64.tar.gz" "storm_${VERSION}_darwin_arm64.tar.gz" "storm_${VERSION}_windows_amd64.zip")
+          bundles=("storm_${VERSION}_linux_amd64.sigstore.jsonl" "storm_${VERSION}_darwin_arm64.sigstore.jsonl" "storm_${VERSION}_windows_amd64.sigstore.jsonl")
+          test "$(find . -mindepth 1 -maxdepth 1 -type f | wc -l)" -eq 6
+          for index in 0 1 2; do
+            asset="${expected[$index]}"
+            bundle="${bundles[$index]}"
+            test -f "$asset" && test ! -L "$asset"
+            test -f "$bundle" && test ! -L "$bundle"
+            gh attestation verify "$asset" --repo "$GITHUB_REPOSITORY" --bundle "$bundle" --signer-workflow "$GITHUB_REPOSITORY/.github/workflows/release-cli.yml" --source-ref refs/heads/main --source-digest "$GITHUB_SHA" --deny-self-hosted-runners
+          done
+          sha256sum "${expected[@]}" "${bundles[@]}" > SHA256SUMS
+          sha256sum --check SHA256SUMS
+      - name: Assemble draft, then publish one immutable prerelease
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api "repos/$GITHUB_REPOSITORY/immutable-releases" --jq .enabled)" = true
+          printf 'Offline validation CLI %s\n\nReviewed source: %s\nWorkflow run: %s/%s/actions/runs/%s\n\nNative Linux amd64, macOS arm64 and Windows amd64 binaries passed artifact acceptance before signing. Verify SHA256SUMS and the included Sigstore bundles with the canonical release workflow identity. Validation is offline and does not authorize or perform recovery.\n' "$VERSION" "$GITHUB_SHA" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" > notes.md
+          gh api --method POST "repos/$GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$VERSION" -f "sha=$GITHUB_SHA" > created-tag.json
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" --jq .object.sha)" = "$GITHUB_SHA"
+          gh release create "$VERSION" incoming/* --repo "$GITHUB_REPOSITORY" --verify-tag --target "$GITHUB_SHA" --title "Storm CLI $VERSION" --draft --prerelease --latest=false --notes-file notes.md
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$VERSION" --jq '.assets | length')" -eq 7
+          gh release edit "$VERSION" --repo "$GITHUB_REPOSITORY" --draft=false --latest=false
+          test "$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$VERSION" --jq .immutable)" = true
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$VERSION" --jq .object.sha)" = "$GITHUB_SHA"
+          gh release verify "$VERSION" --repo "$GITHUB_REPOSITORY"
