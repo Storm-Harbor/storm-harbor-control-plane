@@ -5,15 +5,29 @@ import test from 'node:test';
 const workflowsDirectory = new URL('../../.github/workflows/', import.meta.url);
 
 async function loadWorkflows() {
-  // Publishing documentation is separate from the manually dispatched DR workflows.
-  // Ignore filesystem metadata; every other workflow retains the simulation gates.
+  // Documentation publication and credential-free Go compilation are separate
+  // from DR simulations. Every other workflow retains the simulation gates.
   const names = (await readdir(workflowsDirectory))
-    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && name !== 'documentation.yml')
+    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && !['documentation.yml', 'go-cli.yml'].includes(name))
     .sort();
   return Promise.all(
     names.map(async (name) => ({ name, content: await readFile(new URL(name, workflowsDirectory), 'utf8') })),
   );
 }
+
+test('Go CLI build stays credential-free, read-only and pinned independently of DR simulations', async () => {
+  const content = await readFile(new URL('go-cli.yml', workflowsDirectory), 'utf8');
+  assert.match(content, /^permissions:\n\s{2}contents: read$/m);
+  assert.doesNotMatch(content, /(?:id-token|attestations|packages|contents):\s*write/);
+  assert.doesNotMatch(content, /\$\{\{\s*secrets\./);
+  assert.doesNotMatch(content, /\b(?:gcloud|terraform\s+apply|kubectl\s+apply)\b/);
+  assert.doesNotMatch(content, /node scripts\/simulate-(?:recovery|ai-provider)\.mjs/);
+  assert.match(content, /go-version-file: \.go-version/);
+  assert.equal((await readFile(new URL('../../.go-version', import.meta.url), 'utf8')).trim(), '1.26.11');
+  const uses = [...content.matchAll(/uses:\s*([^\s#]+)/g)].map((match) => match[1]);
+  assert.ok(uses.length > 0);
+  for (const action of uses) assert.match(action, /^[\w.-]+\/[\w./-]+@[a-f0-9]{40}$/);
+});
 
 test('Disaster Recovery simulations cover the declared resources', async () => {
   const workflowNames = (await loadWorkflows()).map(({ name }) => name);
