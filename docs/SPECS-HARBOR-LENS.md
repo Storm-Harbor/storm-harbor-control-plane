@@ -16,6 +16,34 @@ This is accepted architecture, not a claim of implemented production capabilitie
 
 Backend components target Go 1.26.x. Browser HTML/CSS/JavaScript and development/build tools are separate. No new core repository is needed for a collector or Lens API. The first UI slice proceeds independently because it uses synthetic local fixtures and consumes no unpublished API.
 
+## Frontend technology and visual decisions
+
+The owner refined the frontend decision on 2026-11-13: use the same technologies as the reference console, with Storm Harbor's own identity. The selected foundation is React 19, Vite 8, JavaScript/JSX, React Router, Tailwind CSS 4 and shadcn/ui `radix-nova` with Radix primitives, Lucide icons, i18next/react-i18next and Recharts. Use Vitest, Testing Library and Playwright for complementary validation. Pin resolved dependencies, Node 26.10.0 and Yarn 4.18.0 strict Plug'n'Play with a repository-local cache and lockfile. Node is a build/test tool, not the production backend.
+
+Do not adopt the reference console's private packages, corporate branding, business rules, accounts, authentication service or credentials. The user selected its technologies only. Introduce state libraries only for an actual application need; do not carry legacy dependencies into the sandbox.
+
+Recharts owns metrics/time-series presentation. Advanced dependency/journey graphs are planned through the open-source JointJS Community/Core edition, consistent with the documentation's existing diagram direction. [JointJS licensing](https://www.jointjs.com/license) distinguishes free MPL-2.0 Community from commercial JointJS+; no paid extension, proprietary React integration or purchase is approved/required by this delivery. Verify each capability and preserve license/notices before adoption. The first sandbox topology is an accessible synthetic projection, not an implemented advanced graph editor. Future pan/zoom, bounded expansion, filters and node inspection require explicit scenarios; each real edge needs source/freshness provenance and scoped access.
+
+Colors follow the existing product website's canonical tokens: Storm blue `#326ce5`, dark blue `#2554b8`, light blue `#84a7ef`, ink `#111820`, panel `#151e28` and paper `#f4f6f8`. Preserve accessible contrast and semantic state colors. The product website stays in its existing repository; this decision changes Lens, not that site's stack or publication.
+
+## Company SSO, social sign-in and mandatory MFA
+
+The owner explicitly requested company-owned SSO, GitHub and Google sign-in, and mandatory MFA on 2026-11-13. These are planned protected-account capabilities, not implemented by the synthetic sandbox.
+
+| Entry | Planned adapter |
+| --- | --- |
+| Company-selected identity provider | OIDC first; SAML 2.0 through a separately qualified adapter |
+| Google | Validated OIDC authorization-code flow |
+| GitHub | Supported OAuth 2.0 web flow with minimal identity scopes; distinct from bot installation/repository grants |
+
+Core Go handles callbacks, token validation/exchange, policy, session and factor lifecycle. The browser receives a bounded same-origin session using `Secure`, `HttpOnly`, appropriately scoped `SameSite` cookies; provider tokens, secrets and pending MFA credentials never enter local/session storage, URLs, logs or the frontend bundle. Validate issuer, audience, signature, expiry, state, nonce/PKCE as applicable, exact redirect destinations and configured provider metadata. Follow [OIDC Core](https://openid.net/specs/openid-connect-core-1_0.html), [OAuth security BCP](https://www.rfc-editor.org/rfc/rfc9700.html), [Google OIDC](https://developers.google.com/identity/openid-connect/openid-connect), [GitHub authorization](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps) and [SAML browser SSO](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf).
+
+Authentication does not grant organization/project/Harbor membership, provider IAM or repository access. Bind identities to stable provider subject/issuer identifiers, not email alone; prevent automatic account linking or tenant enrollment based only on matching domains/emails. Company federation configuration is an authorized administrative operation with reviewed issuer/metadata/destination and claim mapping.
+
+Require verified MFA before every protected application session. An upstream login, configured provider MFA setting or unverified claim is not proof that the current authentication met policy. Accept upstream assurance only when validated and explicitly trusted by company policy; otherwise require a Lens-managed second factor. Plan WebAuthn/passkeys with user verification and explicit assurance rules, TOTP and hashed single-use recovery codes. Protect enrollment, replacement, reset and recovery with expiry, rate limits, audit and independent proof. No SMS/email-only fallback or silent MFA bypass is introduced. Pending enrollment/challenge sessions cannot read customer data. Reauthenticate for sensitive operations and invalidate sessions after revocation, factor reset or policy changes.
+
+Automated collectors use separately scoped short-lived workload identities, not reusable human sessions or exemptions. Emergency identity/recovery procedures must survive provider outage without disabling the MFA requirement. The unauthenticated synthetic sandbox contains no customer connection or protected operational capability; a sandbox switch cannot create a real authenticated session.
+
 ## Harbors and federation
 
 A **Harbor** is a registered control-plane instance or managed environment boundary, bound to authenticated organization/project scope and explicit capabilities. It is not necessarily a Kubernetes cluster, cloud account or public endpoint. Final resource/identifier contracts remain to be designed.
@@ -72,16 +100,17 @@ Core owns these semantics. Producer validation, manual merge, immutable publicat
 
 ### L1 — Synthetic sandbox
 
-Estimate: specification 6 focused hours plus frontend 16 focused hours; not elapsed work or production qualification.
+Revised estimate after frontend, identity and hosting refinements: specification 8 focused hours plus frontend 24 focused hours; not elapsed work or production qualification.
 
 - [ ] Build original responsive overview, inventory, metrics, topology, recovery and history views.
 - [ ] Keep a persistent sandbox/synthetic label; live connections, observation and operation stay unavailable.
+- [ ] Provide an explicitly fake sign-in journey with GitHub, Google or company SSO selection and a simulated mandatory MFA step; collect no passwords, real codes, tokens or IdP data. Session-only demo access grants no operational authority. Keep real authentication in L2.
 - [ ] Provide synthetic Harbor creation and simulation without credentials, network APIs or browser persistence.
 - [ ] Label client-side scope filtering as demonstration, never backend authorization.
 - [ ] Maintain locale parity, keyboard navigation, mobile menu, bounded safe labels and accessible graph alternatives.
 - [ ] Exercise the actual built artifact: negative paths, isolation, run history, cancellation/reset, i18n and responsive behavior.
 - [ ] Measure statements, branches, functions and lines independently; target 100% each and record gaps honestly.
-- [ ] Prepare source PR and local preview; deployment and live integrations are separate deliveries.
+- [ ] Prepare the source PR and publish the public synthetic demo preview at `lens.stormharbor.io` through Cloud Run, following the owner's final hosting decision on 2026-11-13. Use a pinned non-root static Nginx container, immutable image digest and independently qualified Terraform/WIF/edge producers; Node stays build-only. Keep `stormharbor.io` in its existing repository. Manual merge, infrastructure applies, release/deployment checks and a live URL check precede publication claims. GitHub Pages is not the Lens application host. Live integrations remain separate deliveries.
 
 ### L2 — Authoritative contracts and identity
 
@@ -89,6 +118,9 @@ Estimate: specification 6 focused hours plus frontend 16 focused hours; not elap
 - [ ] Enforce scope before storage, retrieval, counts, graphs, exports and cache access.
 - [ ] Test colliding IDs, switched/concurrent scope, revocation, jobs, idempotency and group membership.
 - [ ] Separate sandbox/observation/operation identity, storage, destinations and evidence.
+- [ ] Publish configurable company SSO, Google/GitHub sign-in, safe server session and mandatory MFA contracts before login consumers.
+- [ ] Qualify OIDC/GitHub adapters and later SAML; test callback mix-up, forged/expired tokens, issuer/audience/redirect denial and account-linking attempts.
+- [ ] Test mandatory MFA enrollment/challenge/recovery, replay/rate limits, verified upstream assurance, factor revocation and session invalidation; no protected access before assurance.
 
 ### L3 — Read-only observation
 
