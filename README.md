@@ -105,6 +105,17 @@ DR_TERRAFORM_SCENARIO=resource-deleted \
 node scripts/simulate-recovery.mjs
 ```
 
+## Offline Go CLI candidate
+
+The core implementation lives in this repository. Build `cmd/storm` with Go 1.26.11; it consumes immutable `storm-lib-recovery-contracts v0.1.0-alpha.1`:
+
+```sh
+go build -trimpath -o storm ./cmd/storm
+./storm validate --file examples/exercise.yaml --organization org-example --project project-example --output json
+```
+
+See the [exact CLI contract and exit codes](docs/getting-started/offline-cli.md). This is a source candidate, not a published binary release. Validation checks an explicit local expectation; it does not authenticate, authorize, resolve secrets or perform recovery. Use `make check-go` for formatting, vet, combined race/statement coverage, executable acceptance, build and module integrity. The website remains in `storm-harbor-app`; a future monitoring-center application is separate.
+
 ## Customer documentation
 
 Follow the [complete control-plane plan and stage checklists](docs/SPECS-CONTROL-PLANE.md) for delivered foundations, prerequisites, acceptance gates and the path from offline validation to private-adopter exercises and retained recovery.

@@ -1,0 +1,69 @@
+name: Go CLI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  cli:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      GOTOOLCHAIN: local
+      GOFLAGS: -mod=readonly
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version-file: .go-version
+          cache: true
+      - name: Check formatting and static analysis
+        run: |
+          test -z "$(gofmt -l cmd/storm/*.go internal/cli/*.go test/acceptance/*.go)"
+          go vet ./...
+          go mod verify
+          go mod tidy -diff
+      - name: Combined race and statement coverage acceptance
+        if: runner.os == 'Linux'
+        run: |
+          mkdir -p .artifacts
+          go test -race -count=1 -covermode=atomic -coverpkg=./... -coverprofile=.artifacts/coverage.out ./...
+          go tool cover -func=.artifacts/coverage.out
+          go tool cover -func=.artifacts/coverage.out | awk '/^total:/ { if ($3+0 < 97) exit 1 }'
+      - name: Native platform and executable acceptance
+        if: runner.os != 'Linux'
+        run: go test -count=1 ./...
+      - name: Build candidate executable and provenance metadata
+        env:
+          SOURCE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          mkdir -p .artifacts/binary
+          go build -trimpath -ldflags "-X main.revision=$SOURCE_REVISION" -o ".artifacts/binary/storm$(go env GOEXE)" ./cmd/storm
+          go version -m ".artifacts/binary/storm$(go env GOEXE)" > .artifacts/binary/build-info.txt
+          printf '%s\n' "$SOURCE_REVISION" > .artifacts/binary/source-revision.txt
+          cp LICENSE .artifacts/binary/LICENSE
+          cp -R licenses .artifacts/binary/licenses
+          find .artifacts/binary -type f -name '._*' -delete
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: storm-cli-${{ runner.os }}-${{ runner.arch }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: .artifacts/binary/
+          if-no-files-found: error
+          retention-days: 14
+
+# These are candidate CI artifacts, not a signed or immutable binary release.
+# Release, checksums/provenance qualification and adopter onboarding follow the
+# user's manual source merge and accepted main/platform checks.
