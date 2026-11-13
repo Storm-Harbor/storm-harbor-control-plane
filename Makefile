@@ -3,7 +3,7 @@ GOFMT ?= gofmt
 
 .PHONY: check-go build-cli
 check-go:
-	@test -z "$$($(GOFMT) -l cmd/storm/*.go internal/cli/*.go test/acceptance/*.go)"
+	@test -z "$$($(GOFMT) -l cmd/storm/*.go cmd/storm-package/*.go internal/cli/*.go internal/release/*.go test/acceptance/*.go)"
 	$(GO) vet ./...
 	@mkdir -p .artifacts
 	$(GO) test -race -count=1 -covermode=atomic -coverpkg=./... -coverprofile=.artifacts/coverage.out ./...

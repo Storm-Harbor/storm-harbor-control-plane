@@ -25,10 +25,17 @@ func TestExecutable(t *testing.T) {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 90*time.Second)
 	defer cancel()
-	build := exec.CommandContext(ctx, "go", "build", "-trimpath", "-o", binary, "./cmd/storm")
-	build.Dir = root
-	if out, err := build.CombinedOutput(); err != nil {
-		t.Fatalf("build: %v %s", err, out)
+	if candidate := os.Getenv("STORM_TEST_BINARY"); candidate != "" {
+		binary = candidate
+		if !filepath.IsAbs(binary) {
+			binary = filepath.Join(root, binary)
+		}
+	} else {
+		build := exec.CommandContext(ctx, "go", "build", "-trimpath", "-o", binary, "./cmd/storm")
+		build.Dir = root
+		if out, err := build.CombinedOutput(); err != nil {
+			t.Fatalf("build: %v %s", err, out)
+		}
 	}
 	canary := "SENSITIVE_CANARY_DO_NOT_ECHO"
 	bad := filepath.Join(dir, canary+".yaml")
@@ -96,6 +103,17 @@ func TestExecutable(t *testing.T) {
 			}
 			if report["apiVersion"] != "cli.stormharbor.io/v1alpha1" || report["status"] != tc.status || bytes.Contains(data, []byte(canary)) || strings.Contains(string(data), root) {
 				t.Fatal("unsafe/unexpected report")
+			}
+			if tc.name == "version" {
+				build, ok := report["build"].(map[string]any)
+				if !ok {
+					t.Fatal("version metadata missing")
+				}
+				for name, key := range map[string]string{"STORM_TEST_VERSION": "version", "STORM_TEST_REVISION": "revision"} {
+					if expected := os.Getenv(name); expected != "" && build[key] != expected {
+						t.Fatalf("release build metadata %s does not match expected value", key)
+					}
+				}
 			}
 		})
 	}
