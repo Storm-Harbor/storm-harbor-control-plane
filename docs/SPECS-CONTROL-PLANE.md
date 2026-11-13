@@ -61,13 +61,13 @@ Stage 04A is an optional early use of a bounded AI adapter for read-only reposit
 
 | Owner | Existing responsibility |
 | --- | --- |
-| `storm-harbor-control-plane` | This specification, architecture/adoption docs, legacy safe simulations and technical-demand records |
+| `storm-harbor-control-plane` | Primary repository for Go CLI, GitHub App/bots, orchestration, APIs, adapters, controllers/CRDs and internal packages; also technical documentation, legacy simulations and demand records |
 | `storm-lib-recovery-contracts` | Initial shared Go configuration semantics, strict YAML/schema validation and typed errors |
 | `storm-harbor-app` | Static multilingual product website and transitional application scaffold |
 | `.github` | Public profile, engineering guidance, contribution/security policies and delivery practices |
 | Customer-owned private repository | Recovery declarations, reviewed policies/runbooks and authorized source references; never shared customer knowledge or secret values |
 
-New CLI, App, orchestrator, evidence, identity and provider components need an explicitly chosen Git owner and native delivery issue before implementation. Capability-oriented `storm-*` runtime and `storm-lib-*` producer names follow the shared guidance; this plan does not claim those future repositories already exist.
+The owner selected `storm-harbor-control-plane` as the primary repository for core implementation on 2026-11-13. Organize Go commands and internal domain/application/adapter packages there; separate runtime components do not imply separate repositories. Sites and user-facing applications remain separate. The product website stays in `storm-harbor-app` at `stormharbor.io`; a future monitoring-center application will have its own delivery and consume the control-plane APIs. GitHub App/bots are core integrations, distinct from that user-facing application. Existing technical source documentation can accompany implementation; this decision does not silently migrate its current publisher. The already published `storm-lib-recovery-contracts` version remains an immutable compatibility dependency. New core repository extraction requires a concrete separately approved need; it is not the default plan. Native owning issues and producer publication gates still apply.
 
 ### Initial alpha versus planned contract families
 
@@ -121,7 +121,7 @@ Published module checksum: `h1:wVFOP9bwkppvtz6VfAXn1dMaOZMT59NsKLH5xNq8O4A=`. Pu
 
 **Outcome:** a maintainer can validate a recovery declaration locally or in a credential-free CI job using an immutable executable release.
 
-- [ ] Create the owning runtime issue/repository and acceptance scenarios before implementation; import the published producer version, not another repository's source or `@main`.
+- [ ] Create the owning runtime issue and acceptance scenarios in `storm-harbor-control-plane` before implementation; import the published producer version, not another repository's source or `@main`.
 - [ ] Define and document the actual CLI interface, stable exit codes and safe structured error/output contracts. Initial commands are for version/configuration inspection and offline validation; command names are finalized in that delivery.
 - [ ] Bound file size/reads, accept an explicit expected scope, reject ambiguous inputs and retain the strict parser's safe failures.
 - [ ] Distinguish a locally declared expected scope from authoritative online authorization. Passing local scope flags can never grant cloud or product access.
@@ -182,6 +182,9 @@ disaster-recovery/
 **Outcome:** after explicit organization/project opt-in, a bot analyzes selected repository revisions and proposes recovery manifests in the private recovery repository. It does not apply them or fetch recovery secrets.
 
 - [ ] Publish the scoped analysis/proposal contract separately from `RecoveryConfiguration`; the current alpha does not accept an AI profile under `spec.ai`.
+- [ ] Let each project opt in and choose an approved agent adapter, including planned Copilot, OpenAI Codex, Claude Code or customer-owned agent integrations. Agent selection is separate from model/provider/reasoning selection; none is mandatory or implemented merely by this plan.
+- [ ] Freeze the approved agent identity/version, runner placement, repository allowlist, data destination, tool capabilities, limits and structured proposal contract. A selected agent cannot widen the bot's effective permissions or inherit unrelated local credentials/plugins.
+- [ ] Verify equivalent scoped analysis/proposal acceptance per adapter and fail closed when its required capability, entitlement or policy is unavailable. A disabled/unavailable agent leaves manual onboarding available and never triggers an unapproved agent/provider fallback.
 - [ ] Select repositories, branches/commits, file/path classes, byte/context limits and permitted questions through reviewed installation/project configuration.
 - [ ] Read authorized Terraform code, application/deployment manifests, dependency declarations and existing runbooks. Exclude raw state, environment/credential files, private keys, secret material and unapproved knowledge; redact/classify before any model egress.
 - [ ] Use explicit read-only tool allowlists. Repository text is untrusted input and cannot enable shell execution, widen repository access, fetch vault data or change the tool policy.
@@ -197,6 +200,8 @@ disaster-recovery/
 **Exit:** a permitted analysis yields a reviewed, validated proposal with explicit gaps and zero cloud/vault mutations or credential disclosure. Ordinary manual YAML onboarding and deterministic recovery work when this feature is disabled.
 
 #### Model and reasoning policy
+
+The [agent adapter policy](architecture/ai-providers.md#customer-selected-analysis-agents) permits customer-selected Copilot, Codex, Claude Code and private agents. Choosing an agent does not imply a particular model, a hosted destination or unlimited autonomous tool use. Each adapter must disclose and enforce its actual capabilities before activation.
 
 The owner preference is an OpenAI GPT model for initial deep repository analysis with **`xhigh`** reasoning, while keeping provider, model and reasoning separately configurable. This is an opt-in project default for that task, not a mandatory platform provider or permission to run inference.
 
@@ -389,6 +394,8 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 ### Stage 15 — Go APIs and operational console
 
 **Outcome:** a user can manage authorized recovery through an API/console using the same contracts as CLI/workflows.
+
+The Go APIs belong to the primary control-plane repository. The future monitoring-center user interface is a separate application consuming those APIs; it does not relocate the existing product website from `storm-harbor-app`.
 
 - [ ] Publish transport-neutral domain contracts and explicit versioned OpenAPI/safe error mappings before API consumers.
 - [ ] Implement configurable human identity and authoritative organization/project access, including revocation and protected route/resource policies.

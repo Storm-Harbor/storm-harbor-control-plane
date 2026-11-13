@@ -4,6 +4,8 @@ Read the shared [engineering guidance](https://github.com/Storm-Harbor/.github/b
 
 Technical documentation always remains in English. Preserve the distinction between accepted architecture, mock fixtures and implemented runtime support. Go 1.26.x is the official language for new executable components; the Node.js 26.6.0 scripts are transitional safe simulations.
 
+The owner selected this as the primary core implementation repository on 2026-11-13: CLI, GitHub App/bots, orchestration, APIs, adapters, controllers/CRDs and internal Go packages belong here. Sites and user-facing apps are separate; the product website remains in `storm-harbor-app` at `stormharbor.io`. A future monitoring-center app consumes core APIs and has a separate delivery. Keep domain/application/adapter boundaries and multiple core commands inside this repository; do not create a repository per capability by default. Preserve the existing immutable contract module dependency until an explicitly versioned migration. Source technical documentation can accompany code; this decision does not move the current documentation publisher implicitly.
+
 Use `docs/SPECS-CONTROL-PLANE.md` for the complete stage/dependency and acceptance checklist. Checked items require concrete release/deployment evidence; live lifecycle and ownership remain in native GitHub issues. Keep private adopter names/bindings out of the public plan.
 
 The checked-in schema/example is a GCP-shaped simulation contract. Provider-neutral resources and optional private AI/RAG/CLI require a versioned migration, not a provider enum edit. User-defined resource/controller and Kubernetes CRD documentation does not mean those runtimes are installed or implemented.

@@ -24,7 +24,24 @@ Model selection, reasoning settings and task responsibility are separate concern
 
 The planned initial use is a scoped, opt-in analysis of selected repository revisions to propose recovery YAML in a PR. The bot identifies infrastructure/application dependencies and reports missing objectives, backup information and target choices. It does not invent missing facts, execute recovery or retrieve secrets. Operators manually register vault bindings without putting credential values in Git or model context.
 
-The preferred deep-analysis preset is an approved OpenAI GPT model with `xhigh` where the selected model/integration supports it; Copilot is an optional adapter with separate entitlement, model/tool discovery and organization-policy gates. The actual model must be pinned and evaluated, and unsupported settings cannot trigger a silent fallback. The [master plan's Stage 04A](../SPECS-CONTROL-PLANE.md#stage-04a-optional-assisted-analysis-and-manifest-drafting) owns the complete checklist, source references and read/proposal/execute separation. This early onboarding branch does not make the full AI/RAG runtime or autonomous recovery available.
+The owner's preferred deep-analysis preset is an approved OpenAI GPT model with `xhigh` where the selected agent/model integration supports it. This remains a project choice; it is not a requirement for Copilot, Claude Code or private agents. The actual agent/model must be pinned and evaluated, and unsupported settings cannot trigger a silent fallback. The [master plan's Stage 04A](../SPECS-CONTROL-PLANE.md#stage-04a-optional-assisted-analysis-and-manifest-drafting) owns the complete checklist, source references and read/proposal/execute separation. This early onboarding branch does not make the full AI/RAG runtime or autonomous recovery available.
+
+## Customer-selected analysis agents
+
+The owner explicitly selected agent-independent, opt-in repository analysis on 2026-11-13. Each project can choose its approved agent through a bounded adapter. The choices below are planned integrations, not a list of already working SDK/CLI integrations or licensed account capabilities.
+
+| Planned choice | Required integration boundary |
+| --- | --- |
+| GitHub Copilot | Approved integration, entitlement/organization policy, actual model/tool capabilities and selected repository access |
+| OpenAI Codex | Project-approved supported integration, explicit identity, fixed tool/input/output policy and verified data destination |
+| Claude Code | Project-approved supported integration, explicit identity, fixed tool/input/output policy and verified data destination |
+| Customer-owned agent or private AI/RAG/CLI | The same scoped proposal contract, isolation, bounded tools and customer data/retention controls |
+
+The analysis contract must bind authenticated organization/project scope, selected repositories/revisions/paths, task, allowed input data, execution placement, agent identity/version, tool allowlist, timeout/byte/cost ceilings, authorized destination and a structured manifest/findings output. A project may keep analysis on a private runner. Repository read access does not by itself authorize sending source or knowledge to an external agent service.
+
+Storm Harbor supplies only the permitted inputs/tools and independently validates proposals. Installing or choosing an agent does not grant access beyond the bot's repository allowlist, enable local shell access, import ambient developer credentials/plugins or authorize cloud/vault retrieval. Where an agent cannot satisfy a required boundary, that adapter remains unavailable for the task. Exact authentication, supported models, settings and capabilities are verified against the selected integration's official documentation and account policy during implementation/activation; none is assumed interchangeable.
+
+The reviewed project profile selects one adapter explicitly. There is no automatic Copilot-to-Codex/Claude/private-provider fallback. Record safe provenance and capability decisions, not unrestricted prompts or internal reasoning. Secret bindings remain operator-managed; candidate manifests and findings go through the same constrained PR/human-review path for every agent. The current `RecoveryConfiguration` alpha accepts neither `spec.ai` nor `spec.agent`; the future versioned analysis profile is a separate contract.
 
 ## Private knowledge boundary
 
