@@ -38,28 +38,30 @@ test('CLI release is manual, source-qualified and separated from ordinary build 
   assert.match(content, /head_sha=\$GITHUB_SHA&event=push&branch=master/);
   assert.match(content, /\$run\.status == "completed" and \$run\.conclusion == "success"/);
   assert.match(content, /group: release-cli\n\s+cancel-in-progress: false/);
-  const build = content.split('\n  build:\n')[1].split('\n  publish:\n')[0];
-  const publish = content.split('\n  publish:\n')[1];
+  const build = content.split('\n  build:\n')[1].split('\n  draft:\n')[0];
+  const draft = content.split('\n  draft:\n')[1];
   assert.match(build, /needs: validate/);
   assert.match(build, /id-token: write/);
   assert.match(build, /attestations: write/);
   assert.doesNotMatch(build, /contents: write/);
-  assert.match(publish, /needs: \[validate, build\]/);
-  assert.match(publish, /contents: write/);
-  assert.doesNotMatch(publish, /id-token: write/);
+  assert.match(draft, /needs: \[validate, build\]/);
+  assert.match(draft, /contents: write/);
+  assert.doesNotMatch(draft, /id-token: write/);
   assert.doesNotMatch(content, /\$\{\{\s*secrets\./);
   assert.doesNotMatch(content, /\b(?:gcloud|terraform\s+apply|kubectl\s+apply)\b/);
   for (const match of content.matchAll(/uses:\s*([^\s#]+)/g)) assert.match(match[1], /^[\w.-]+\/[\w./-]+@[a-f0-9]{40}$/);
 });
 
-test('CLI publication verifies signed source before assembling and sealing a draft', async () => {
+test('CLI preparation verifies signed source and leaves publication to an authorized maintainer', async () => {
   const content = await readFile(new URL('release-cli.yml', workflowsDirectory), 'utf8');
-  for (const required of ['--signer-workflow', '--source-ref refs/heads/master', '--source-digest "$GITHUB_SHA"', '--deny-self-hosted-runners', 'sha256sum --check SHA256SUMS', '--draft --prerelease', '--draft=false --latest=false', '--jq .immutable']) assert.ok(content.includes(required), `release must enforce ${required}`);
+  for (const required of ['--signer-workflow', '--source-ref refs/heads/master', '--source-digest "$GITHUB_SHA"', '--deny-self-hosted-runners', 'sha256sum --check SHA256SUMS', '--draft --prerelease', '--json assets,isDraft,isPrerelease,tagName,targetCommitish']) assert.ok(content.includes(required), `release must enforce ${required}`);
   assert.ok(content.indexOf('gh attestation verify') < content.indexOf('gh release create'));
   assert.ok(content.indexOf('gh api --method POST') < content.indexOf('gh release create'));
   assert.match(content, /--verify-tag/);
   assert.match(content, /git\/ref\/tags\/\$VERSION/);
-  assert.ok(content.indexOf('gh release create') < content.indexOf('gh release edit'));
+  assert.doesNotMatch(content, /immutable-releases|gh release edit|--draft=false/);
+  assert.match(content, /\.isDraft == true and \.isPrerelease == true/);
+  assert.match(content, /10#\$\{BASH_REMATCH\[1\]\} >= 93/);
   assert.doesNotMatch(content, /--clobber|git push --force|gh release delete/);
   assert.match(content, /STORM_TEST_BINARY=.*STORM_TEST_VERSION=.*STORM_TEST_REVISION=.*go test/);
 });
