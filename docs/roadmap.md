@@ -47,3 +47,7 @@ Each private recovery repository may also publish an optional [dashboard](gettin
 ## Community and sustainability
 
 Prepare [sponsorship](community/sponsorship.md) using verified payment destinations, and maintain [CNCF readiness](community/cncf-readiness.md) with actual implementation/adoption evidence. These tracks do not imply active payments, CNCF acceptance or production support.
+
+## Harbor Lens
+
+The [Harbor Lens plan](SPECS-HARBOR-LENS.md) records our own separate frontend, synthetic sandbox, future read-only observation, Harbor groups and independently approved operations. [Journey #16](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/16) starts with specification and synthetic UI. Core Go producers remain here; the product website stays in its existing repository.

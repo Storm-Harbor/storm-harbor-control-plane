@@ -32,7 +32,7 @@ Stages identify acceptance boundaries, not calendar promises. Independent work c
 | --- | --- | --- | --- |
 | 00 | Public foundations and engineering ownership | None | Delivered |
 | 01 | Initial versioned Go configuration producer | 00 | Alpha released and verified |
-| 02 | Offline Go CLI and immutable executable artifacts | 01 | [CLI source candidate #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14); release/qualification pending |
+| 02 | Offline Go CLI and immutable executable artifacts | 01 | [CLI source merged #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14); signed binary release/qualification pending |
 | 03 | Private adopter recovery repository and reviewed configuration | 02 | Approved adoption step; repository not created yet |
 | 04 | GitHub App installation, events and trusted product scope | 01; 03 for pilot onboarding | Planned |
 | 04A | Optional repository analysis and manifest proposals | 02–04; explicit model/data/tool-policy gates | Planned early onboarding branch |
@@ -64,6 +64,7 @@ Stage 04A is an optional early use of a bounded AI adapter for read-only reposit
 | `storm-harbor-control-plane` | Primary repository for Go CLI, GitHub App/bots, orchestration, APIs, adapters, controllers/CRDs and internal packages; also technical documentation, legacy simulations and demand records |
 | `storm-lib-recovery-contracts` | Initial shared Go configuration semantics, strict YAML/schema validation and typed errors |
 | `storm-harbor-app` | Static multilingual product website and transitional application scaffold |
+| `harbor-lens` | Separate operational frontend and synthetic sandbox; future scoped core API consumer |
 | `.github` | Public profile, engineering guidance, contribution/security policies and delivery practices |
 | Customer-owned private repository | Recovery declarations, reviewed policies/runbooks and authorized source references; never shared customer knowledge or secret values |
 
@@ -123,17 +124,19 @@ Published module checksum: `h1:wVFOP9bwkppvtz6VfAXn1dMaOZMT59NsKLH5xNq8O4A=`. Pu
 
 First source slice: [Journey #11](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/11) → [Epic #12](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/12) → [CLI #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14) and [documentation #13](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/13). The [CLI guide](getting-started/offline-cli.md) documents candidate commands and the raw-input fingerprint boundary. Checkboxes remain open until their actual merge/publication/acceptance gates pass; semantic normalization and execution-plan digests remain future producer contracts.
 
-- [ ] Create the owning runtime issue and acceptance scenarios in `storm-harbor-control-plane` before implementation; import the published producer version, not another repository's source or `@main`.
-- [ ] Define and document the actual CLI interface, stable exit codes and safe structured error/output contracts. Initial commands are for version/configuration inspection and offline validation; command names are finalized in that delivery.
-- [ ] Bound file size/reads, accept an explicit expected scope, reject ambiguous inputs and retain the strict parser's safe failures.
-- [ ] Distinguish a locally declared expected scope from authoritative online authorization. Passing local scope flags can never grant cloud or product access.
-- [ ] Keep offline validation free of cloud, vault and GitHub mutations; avoid raw document dumps in default output.
+- [x] Create the owning runtime issue and acceptance scenarios in `storm-harbor-control-plane` before implementation; import the published producer version, not another repository's source or `@main`.
+- [x] Define and document the actual CLI interface, stable exit codes and safe structured error/output contracts. Initial commands are for version/configuration inspection and offline validation; command names are finalized in that delivery.
+- [x] Bound file size/reads, accept an explicit expected scope, reject ambiguous inputs and retain the strict parser's safe failures.
+- [x] Distinguish a locally declared expected scope from authoritative online authorization. Passing local scope flags can never grant cloud or product access.
+- [x] Keep offline validation free of cloud, vault and GitHub mutations; avoid raw document dumps in default output.
 - [ ] Define versioned normalization and configuration digests without reading secret values; freeze schema/contract versions into future planning inputs.
 - [ ] Produce checksummed executable artifacts with provenance and a declared OS/architecture support matrix. Test each claimed platform; cross-compilation alone is not operational acceptance.
-- [ ] Verify invalid configuration, cross-scope references, unsafe lifecycle, secret leakage canaries, cancellation/file errors and deterministic exit behavior.
+- [x] Verify invalid configuration, cross-scope references, unsafe lifecycle, secret leakage canaries, cancellation/file errors and deterministic exit behavior.
 - [ ] Publish the reviewed CLI release and its real usage examples; update Getting Started alongside the executable.
 
 **Exit:** an adopter can run documented validation against synthetic exercise/restore YAML with no provider credentials. `plan`, `run`, `resume`, `cancel` and cleanup operations remain separate later capabilities until their contracts and execution gates are implemented.
+
+**Source evidence:** manually merged [PR #15](https://github.com/Storm-Harbor/storm-harbor-control-plane/pull/15), main commit `9ad80e4274281200e95ed0158e48469e6e6b5b87`, passing [native Go acceptance](https://github.com/Storm-Harbor/storm-harbor-control-plane/actions/runs/43413904985), published [CLI guide](getting-started/offline-cli.md) and [documentation deployment](https://github.com/Storm-Harbor/storm-harbor-control-plane/actions/runs/43413904510). These checked source outcomes do not establish an immutable binary release. The [release runbook](operations/releases.md) describes the remaining signing/publication gates; semantic normalization remains a separate future producer contract.
 
 ### Stage 03 — Customer-owned private recovery repository
 
@@ -397,7 +400,7 @@ Reusable workflows must accept bounded typed inputs, pin the released analysis e
 
 **Outcome:** a user can manage authorized recovery through an API/console using the same contracts as CLI/workflows.
 
-The Go APIs belong to the primary control-plane repository. The future monitoring-center user interface is a separate application consuming those APIs; it does not relocate the existing product website from `storm-harbor-app`.
+The Go APIs belong to the primary control-plane repository. The separate monitoring-center application is **Harbor Lens**, in `harbor-lens`; the website stays in `storm-harbor-app`. See the [Harbor Lens plan](SPECS-HARBOR-LENS.md) for sandbox, private observation, Harbor groups and approved operation. The first synthetic frontend may proceed without an unpublished API; live integration retains all producer/security gates.
 
 - [ ] Publish transport-neutral domain contracts and explicit versioned OpenAPI/safe error mappings before API consumers.
 - [ ] Implement configurable human identity and authoritative organization/project access, including revocation and protected route/resource policies.
