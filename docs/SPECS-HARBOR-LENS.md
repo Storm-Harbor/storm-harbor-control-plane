@@ -18,7 +18,11 @@ Backend components target Go 1.26.x. Browser HTML/CSS/JavaScript and development
 
 ## Frontend technology and visual decisions
 
-The owner refined the frontend decision on 2026-11-13: use the same technologies as the reference console, with Storm Harbor's own identity. The selected foundation is React 19, Vite 8, JavaScript/JSX, React Router, Tailwind CSS 4 and shadcn/ui `radix-nova` with Radix primitives, Lucide icons, i18next/react-i18next and Recharts. Use Vitest, Testing Library and Playwright for complementary validation. Pin resolved dependencies, Node 26.10.0 and Yarn 4.18.0 strict Plug'n'Play with a repository-local cache and lockfile. Node is a build/test tool, not the production backend.
+The owner refined the frontend decision on 2026-11-13: use the same technologies as the reference console, with Storm Harbor's own identity. The selected foundation is React 19, Vite 8, JavaScript/JSX, React Router, Tailwind CSS 4 and shadcn/ui `radix-nova` with Radix primitives, Lucide icons, i18next/react-i18next and Recharts. Use Vitest, Testing Library and Playwright for complementary validation. The owner also requires full locale parity with the product website: 25 configured locale IDs, en-GB default, complete UI/error/demo catalogs, and RTL for Arabic, Hebrew and Urdu. Keep both selectors and all mock-access/operational screens aligned; technical documentation remains English.
+
+The website baseline is `en-GB`, `en-US`, `es-ES`, `ca-ES`, `pt-PT`, `pt-BR`, `it-IT`, `ru-RU`, `de-DE`, `fr-FR`, `uk-UA`, `et-EE`, `pl-PL`, `bg-BG`, `zh-Hans`, `hi-IN`, `ja-JP`, `he-IL`, `ur-PK`, `af-ZA`, `ar`, `ko-KR`, `tr-TR`, `id-ID` and `vi-VN`. Use native language names in selectors, explicit HTML language/direction and complete messages for access, validation, views and simulation. A new website locale requires a corresponding Lens catalog and browser journey; future live screens retain the same requirement.
+
+Pin resolved dependencies, Node 26.10.0 and Yarn 4.18.0 strict Plug'n'Play with a repository-local cache and lockfile. Node is a build/test tool, not the production backend.
 
 Do not adopt the reference console's private packages, corporate branding, business rules, accounts, authentication service or credentials. The user selected its technologies only. Introduce state libraries only for an actual application need; do not carry legacy dependencies into the sandbox.
 
@@ -100,14 +104,14 @@ Core owns these semantics. Producer validation, manual merge, immutable publicat
 
 ### L1 — Synthetic sandbox
 
-Revised estimate after frontend, identity and hosting refinements: specification 8 focused hours plus frontend 24 focused hours; not elapsed work or production qualification.
+Revised estimate after frontend, identity and hosting refinements: specification 8 focused hours plus frontend 40 focused hours, including full locale/RTL acceptance; not elapsed work or production qualification.
 
 - [ ] Build original responsive overview, inventory, metrics, topology, recovery and history views.
 - [ ] Keep a persistent sandbox/synthetic label; live connections, observation and operation stay unavailable.
 - [ ] Provide an explicitly fake sign-in journey with GitHub, Google or company SSO selection and a simulated mandatory MFA step; collect no passwords, real codes, tokens or IdP data. Session-only demo access grants no operational authority. Keep real authentication in L2.
 - [ ] Provide synthetic Harbor creation and simulation without credentials, network APIs or browser persistence.
 - [ ] Label client-side scope filtering as demonstration, never backend authorization.
-- [ ] Maintain locale parity, keyboard navigation, mobile menu, bounded safe labels and accessible graph alternatives.
+- [ ] Maintain all 25 website locales, complete UI/error catalogs, RTL direction, keyboard navigation, mobile menu, bounded safe labels and accessible graph alternatives; validate every locale through access, views, simulation and responsive navigation.
 - [ ] Exercise the actual built artifact: negative paths, isolation, run history, cancellation/reset, i18n and responsive behavior.
 - [ ] Measure statements, branches, functions and lines independently; target 100% each and record gaps honestly.
 - [ ] Prepare the source PR and publish the public synthetic demo preview at `lens.stormharbor.io` through Cloud Run, following the owner's final hosting decision on 2026-11-13. Use a pinned non-root static Nginx container, immutable image digest and independently qualified Terraform/WIF/edge producers; Node stays build-only. Keep `stormharbor.io` in its existing repository. Manual merge, infrastructure applies, release/deployment checks and a live URL check precede publication claims. GitHub Pages is not the Lens application host. Live integrations remain separate deliveries.

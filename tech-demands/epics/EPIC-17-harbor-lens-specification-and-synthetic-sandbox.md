@@ -5,9 +5,9 @@ Owner-approved direction: 2026-11-13. Parent: [Journey #16](https://github.com/S
 | Delivery | Owner | Focused-hour estimate |
 | --- | --- | --- |
 | [Specification #18](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/18) | Core docs and boundaries | 8 |
-| [Sandbox #1](https://github.com/Storm-Harbor/harbor-lens/issues/1) | Separate frontend | 24 |
+| [Sandbox #1](https://github.com/Storm-Harbor/harbor-lens/issues/1) | Separate frontend | 40 |
 
-Umbrella estimate: direct-child sum, 32 hours, not additional implementation effort. GitHub owns live status/assignment.
+Umbrella estimate: direct-child sum, 48 hours, not additional implementation effort. GitHub owns live status/assignment.
 
 Deliver the [Lens plan](../../docs/SPECS-HARBOR-LENS.md), original responsive/localized views and synthetic inventory/topology/metrics/history/simulation. Keep observation/operation unavailable. No credentials, customer state, provider calls, live identity, AI integration or invented current-alpha YAML fields belong to this slice.
 
