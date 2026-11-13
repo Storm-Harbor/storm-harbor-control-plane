@@ -8,7 +8,7 @@ async function loadWorkflows() {
   // Documentation publication and credential-free Go compilation are separate
   // from DR simulations. Every other workflow retains the simulation gates.
   const names = (await readdir(workflowsDirectory))
-    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && !['documentation.yml', 'go-cli.yml'].includes(name))
+    .filter((name) => name.endsWith('.yml') && !name.startsWith('.') && !['branch-policy.yml', 'documentation.yml', 'go-cli.yml'].includes(name))
     .sort();
   return Promise.all(
     names.map(async (name) => ({ name, content: await readFile(new URL(name, workflowsDirectory), 'utf8') })),

@@ -2,7 +2,7 @@ name: Go CLI
 
 on:
   push:
-    branches: [main]
+    branches: [develop, master]
   pull_request:
   workflow_dispatch:
 
@@ -66,4 +66,4 @@ jobs:
 
 # These are candidate CI artifacts, not a signed or immutable binary release.
 # Release, checksums/provenance qualification and adopter onboarding follow the
-# user's manual source merge and accepted main/platform checks.
+# user's manual source merge and accepted master/platform checks.
