@@ -32,7 +32,7 @@ Stages identify acceptance boundaries, not calendar promises. Independent work c
 | --- | --- | --- | --- |
 | 00 | Public foundations and engineering ownership | None | Delivered |
 | 01 | Initial versioned Go configuration producer | 00 | Alpha released and verified |
-| 02 | Offline Go CLI and immutable executable artifacts | 01 | Planned; next runtime delivery |
+| 02 | Offline Go CLI and immutable executable artifacts | 01 | [CLI source candidate #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14); release/qualification pending |
 | 03 | Private adopter recovery repository and reviewed configuration | 02 | Approved adoption step; repository not created yet |
 | 04 | GitHub App installation, events and trusted product scope | 01; 03 for pilot onboarding | Planned |
 | 04A | Optional repository analysis and manifest proposals | 02–04; explicit model/data/tool-policy gates | Planned early onboarding branch |
@@ -120,6 +120,8 @@ Published module checksum: `h1:wVFOP9bwkppvtz6VfAXn1dMaOZMT59NsKLH5xNq8O4A=`. Pu
 ### Stage 02 — Offline Go CLI
 
 **Outcome:** a maintainer can validate a recovery declaration locally or in a credential-free CI job using an immutable executable release.
+
+First source slice: [Journey #11](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/11) → [Epic #12](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/12) → [CLI #14](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/14) and [documentation #13](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/13). The [CLI guide](getting-started/offline-cli.md) documents candidate commands and the raw-input fingerprint boundary. Checkboxes remain open until their actual merge/publication/acceptance gates pass; semantic normalization and execution-plan digests remain future producer contracts.
 
 - [ ] Create the owning runtime issue and acceptance scenarios in `storm-harbor-control-plane` before implementation; import the published producer version, not another repository's source or `@main`.
 - [ ] Define and document the actual CLI interface, stable exit codes and safe structured error/output contracts. Initial commands are for version/configuration inspection and offline validation; command names are finalized in that delivery.

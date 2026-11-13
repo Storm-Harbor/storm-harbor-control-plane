@@ -11,7 +11,8 @@ Use the [complete plan and checklists](../SPECS-CONTROL-PLANE.md) to follow ever
 | Public website and English documentation | Published |
 | Credential-free GCP-shaped simulations | Available in this repository; see [simulation pipelines](../operations/pipelines.md) |
 | Provider-neutral Go configuration validation | Immutable [v0.1.0-alpha.1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/releases/tag/v0.1.0-alpha.1), verified through the public Go proxy/checksum database; offline library only |
-| GitHub App installation, executor/CLI, vault resolution, project provisioning and real recovery | Planned; no installation link or production recovery command is available yet |
+| Offline Go CLI | [Source candidate and exact usage](offline-cli.md); no published binary release yet |
+| GitHub App installation, published executor binaries, vault resolution, project provisioning and real recovery | Planned; no installation link or production recovery command is available yet |
 | Continuous controller, custom resource registry, Kubernetes CRDs and private AI adapters | Planned |
 | Per-repository recovery dashboard, historical reports, gap checklist and diagrams | Accepted design; [adoption/publication guide](recovery-dashboard.md), not implemented |
 
@@ -54,6 +55,7 @@ Store operational evidence in the customer's approved evidence store, outside th
 ## Reading order
 
 - [YAML structure and examples](yaml.md): the exact initial contract and its limits.
+- [Offline Go CLI](offline-cli.md): reviewed source builds, local validation, output/exit behavior and publication gates.
 - [Policies and recovery journey](policies-and-journey.md): what must happen before and after validation.
 - [GCP targets](gcp-targets.md): creating a new project versus restoring into an existing target.
 - [Recovery repository dashboard](recovery-dashboard.md): history, gap-analysis checklists, diagrams and private publication.

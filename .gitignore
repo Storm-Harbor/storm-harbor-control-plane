@@ -10,3 +10,6 @@ artifacts/
 node_modules/
 test-results/
 playwright-report/
+.artifacts/
+*.test
+*.exe
