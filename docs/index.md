@@ -83,7 +83,7 @@ flowchart LR
 4. **Prove:** preserve signed results outside the recovered failure domain.
 
 !!! info "Built for safe validation first"
-    This repository owns the technical documentation site and a safe simulation scaffold. It validates contracts, ordering, metrics, guardrails, and evidence without credentials or changes to external resources. The customer website and operational console live in `storm-harbor-app`.
+    This repository owns the technical documentation site and a safe simulation scaffold. It validates contracts, ordering, metrics, guardrails, and evidence without credentials or changes to external resources. The product website stays in `storm-harbor-app`. [Harbor Lens](SPECS-HARBOR-LENS.md) is the separate operational frontend, starting with a synthetic sandbox.
 
 ## Explore by goal
 
