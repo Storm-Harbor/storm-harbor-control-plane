@@ -1,6 +1,8 @@
 # Epic 4 — Private configuration and execution contracts
 
-Native owner: [Epic #4](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/4). Parent: [Journey #3](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/3), [durable record](../journeys/JOURNEY-3-secure-declarative-recovery-foundation.md). GitHub owns current lifecycle and PR links. Estimate: 20 focused engineering hours = documentation 8 + producer 12; no duplicated parent implementation effort.
+Native owner: [Epic #4](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/4). Parent: [Journey #3](https://github.com/Storm-Harbor/storm-harbor-control-plane/issues/3), [durable record](../journeys/DONE-JOURNEY-3-secure-declarative-recovery-foundation.md). GitHub owns current lifecycle and PR links. Estimate: 20 focused engineering hours = documentation 8 + producer 12; no duplicated parent implementation effort.
+
+Completed: **2026-11-12T17:05:03Z**, after both native children and their publication/acceptance gates were verified. Full future stages are tracked separately in the [master plan](../../docs/SPECS-CONTROL-PLANE.md).
 
 ## Deliveries
 
@@ -17,4 +19,4 @@ No cloud/vault/production job execution, GitHub App hosting, CLI consumer or aut
 
 ## Integration and exit
 
-Published documentation must describe current versus planned capabilities accurately, preserve existing simulation fixtures and cross-link the module owner and native hierarchy. Future runtime consumers adopt only a validated immutable producer release after manual merge. Evidence checkpoints carry candidate revision/check URLs and remaining merge/release gates. Close the Epic only after both children and all publication acceptance are complete.
+Published documentation describes current versus planned capabilities, preserves the legacy simulation fixtures and cross-links the module owner and native hierarchy. [v0.1.0-alpha.1](https://github.com/Storm-Harbor/storm-lib-recovery-contracts/releases/tag/v0.1.0-alpha.1) is published immutably at accepted commit `315acfaaf13e7606525476764f204566682c2ab6`; the public Go proxy origin and signed module/go.mod checksums are verified. Both children and this Epic are closed with native Project Done. Future runtime consumers can pin this release only within their own scoped delivery and acceptance gates.

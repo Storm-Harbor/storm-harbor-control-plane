@@ -8,17 +8,19 @@ The [platform contract](platform-contract.md) is the accepted target. New execut
 
 | Repository | Owns | Does not own |
 | --- | --- | --- |
-| `storm-harbor-app` | public product website, login journey, MFA challenge UI, and the authenticated operational console | credentials, MFA secrets, recovery domain execution, or authoritative inventory |
-| `storm-harbor-control-plane` | this technical documentation site, architecture, schemas, safe simulations, and executable contract checks | the customer console or a production runtime API |
-| `storm-lib-recovery-contracts` | initial Go producer candidate: scoped provider-neutral configuration, strict YAML/schema validation and safe typed errors | authentication, GitHub App hosting, cloud/vault calls, execution or native CRD installation |
+| `storm-harbor-app` | existing product website and transitional login/MFA/application scaffold; the website remains published at `stormharbor.io` | recovery domain execution, authoritative inventory or the future separately delivered monitoring-center app |
+| `storm-harbor-control-plane` | architecture/docs, legacy safe simulations and planned primary Go core: CLI, GitHub integration, orchestration, APIs, adapters and controllers/CRDs | product website presentation or the future monitoring-center user interface; planned runtime is not implemented by this ownership decision |
+| `storm-lib-recovery-contracts` | released alpha Go producer: scoped provider-neutral configuration, strict YAML/schema validation and safe typed errors | authentication, GitHub App hosting, cloud/vault calls, execution or native CRD installation |
 | `api-auth` | optional identity integration currently used by the legacy BFF | a mandatory identity provider for all Storm Harbor adopters; product authorization or recovery execution |
 | `hub-ai` / Maya and project-owned AI/RAG/CLI | optional, scoped intelligence behind a versioned adapter; hub-ai is still under development | mandatory AI, replicated customer knowledge, unrestricted cloud access or deterministic recovery authority |
 
-The Storm Harbor runtime will be introduced through independent repositories as its bounded capabilities become executable.
+The owner selected `storm-harbor-control-plane` as the primary implementation repository on 2026-11-13. It will own the Go CLI, GitHub App/bots, orchestration, APIs, adapters, controllers/CRDs and internal packages. These remain separate domain/application/adapter boundaries inside the repository; multiple core commands or deployment units do not require multiple repositories. Sites and user-facing applications are separate. The product website remains in `storm-harbor-app`, published at `stormharbor.io`. A future monitoring-center application will be delivered separately and consume the control-plane APIs; no monitoring repository is created in this slice. GitHub App/bots refer to integrations, not that future user-facing application. Technical source documentation may accompany code; the existing documentation publisher is not moved implicitly.
+
+The already released `storm-lib-recovery-contracts` remains a pinned immutable dependency for compatibility. Preserve its published module paths/tags; any consolidation or extraction needs an explicit migration. No new core repository is created by default.
 
 ## Naming convention
 
-Reusable Storm Harbor packages use the `storm-lib-*` repository and package-family prefix. Independently deployable microservices use the `storm-*` prefix.
+Use capability-oriented Go command/package names within the primary repository. Existing externally versioned reusable packages retain their `storm-lib-*` identity. A service name describes a boundary, not a requirement to create another repository.
 
 Examples of capability-oriented names are:
 

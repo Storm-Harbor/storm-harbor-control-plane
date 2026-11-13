@@ -1,5 +1,7 @@
 # RTO, RPO, and evidence
 
+This is the target evidence design; the current offline alpha does not execute recovery or produce live evidence bundles. The optional [repository dashboard](../getting-started/recovery-dashboard.md) will publish approved historical summaries and diagrams from these records while complete evidence stays in the customer's independent store.
+
 ## Measurement
 
 RTO and RPO require measurement points defined for each service.
